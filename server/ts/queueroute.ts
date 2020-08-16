@@ -1,43 +1,82 @@
 import { Router } from "express";
 import fs from "fs";
 import path from "path";
+import { v4 as uuid4 } from "uuid";
 
 // create route
 const router = Router();
 
 // paths
-const fodler = path.join("data");
-const datapath = path.join(fodler, "q.data");
+const folder = path.join("data");
+const datapath = path.join(folder, "q.json");
 
-// check if data file exists
+// check if data folder and file exist
 if (!fs.existsSync(datapath)) {
-  fs.mkdirSync(fodler);
-  fs.writeFileSync(datapath, "");
+  if (!fs.existsSync(folder)) {
+    fs.mkdirSync(folder);
+  }
+  fs.writeFileSync(datapath, "[]");
 }
 
 // get queue
 router.get("/q", (req, res) => {
-  // getting urks from file
-  const filecontents = fs.readFileSync(datapath, { encoding: "utf8" });
-  const data = filecontents.split("\n");
-
-  // removing last empty
-  data.pop();
-
-  // sending data
-  res.send(JSON.stringify(data));
+  res.send(fs.readFileSync(datapath, { encoding: "utf8" }));
 });
+
+// queue entry type
+type qentry = {
+  url: string;
+  id: string;
+};
+
+// get queue from file
+const getqdata = (): qentry[] => {
+  return JSON.parse(fs.readFileSync(datapath, { encoding: "utf8" }));
+};
+
+// write q data to file
+const writeqdata = (data: qentry[]) => {
+  fs.writeFileSync(datapath, JSON.stringify(data));
+};
 
 // add to queue
 router.post("/add", (req, res) => {
   // TODO: validate the url
-  // writing the url into file
-  const fstream = fs.createWriteStream(datapath, {
-    flags: "a",
-  });
-  fstream.write(`${req.body["url"]}\n`);
-  fstream.close();
 
+  // writing data into file
+  let queue = getqdata();
+  queue.push({
+    url: req.body["url"],
+    // assinging unique id
+    id: uuid4(),
+  });
+  writeqdata(queue);
+
+  res.sendStatus(200);
+});
+
+// remove from queue
+router.post("/remove", (req, res) => {
+  // get id from request
+  const id = req.body["id"];
+
+  // remove from q and check if entry exists
+  let found = false;
+  const queue = getqdata().filter((e) => {
+    if (e.id === id) {
+      found = true;
+      return false;
+    }
+    return true;
+  });
+
+  if (!found) {
+    // return client error if did not remove
+    res.sendStatus(400);
+    return;
+  }
+
+  writeqdata(queue);
   res.sendStatus(200);
 });
 

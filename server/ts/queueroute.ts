@@ -18,11 +18,6 @@ if (!fs.existsSync(datapath)) {
   fs.writeFileSync(datapath, "[]");
 }
 
-// get queue
-router.get("/q", (req, res) => {
-  res.send(fs.readFileSync(datapath, { encoding: "utf8" }));
-});
-
 // queue entry type
 type qentry = {
   url: string;
@@ -39,8 +34,14 @@ const writeqdata = (data: qentry[]) => {
   fs.writeFileSync(datapath, JSON.stringify(data));
 };
 
+// get queue
+router.get("/q", (req, res) => {
+  // res.send(fs.readFileSync(datapath, { encoding: "utf8" }));
+  res.send(getqdata());
+});
+
 // add to queue
-router.post("/add", (req, res) => {
+router.put("/add", (req, res) => {
   // TODO: validate the url
 
   // writing data into file
@@ -56,7 +57,7 @@ router.post("/add", (req, res) => {
 });
 
 // remove from queue
-router.post("/remove", (req, res) => {
+router.delete("/remove", (req, res) => {
   // get id from request
   const id = req.body["id"];
 

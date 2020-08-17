@@ -36,7 +36,6 @@ const writeqdata = (data: qentry[]) => {
 
 // get queue
 router.get("/q", (req, res) => {
-  // res.send(fs.readFileSync(datapath, { encoding: "utf8" }));
   res.send(getqdata());
 });
 
@@ -58,7 +57,8 @@ router.put("/add", (req, res) => {
 });
 
 // remove from queue
-router.delete("/remove", (req, res) => {
+// put because axios does not support delete requests with bodies
+router.put("/remove", (req, res) => {
   // get id from request
   const id = req.body["id"];
 

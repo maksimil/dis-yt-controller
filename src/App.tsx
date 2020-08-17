@@ -1,21 +1,27 @@
 import React from "react";
 import Input from "./components/Input";
 import QueueElement from "./components/QueueElement";
+import axios from "axios";
 
-class App extends React.Component<{}, { queue: string[] }> {
-  state = {
-    queue: [],
-  };
+type AppState = {
+  queue: {
+    url: string;
+    id: string;
+  }[];
+};
+
+class App extends React.Component<{ state: AppState }, AppState> {
+  state = this.props.state;
 
   addtoqueue = (url: string) => {
-    this.setState({
-      queue: [url, ...this.state.queue],
+    axios.put("http://localhost:5000/q/add", `url=${url}`).then((res) => {
+      this.setState({ queue: res.data });
     });
   };
 
-  removeelement = (url: string) => {
-    this.setState({
-      queue: this.state.queue.filter((e) => e !== url),
+  removeelement = (id: string) => {
+    axios.put(`http://localhost:5000/q/remove`, `id=${id}`).then((res) => {
+      this.setState({ queue: res.data });
     });
   };
 
@@ -26,8 +32,12 @@ class App extends React.Component<{}, { queue: string[] }> {
           <Input add={this.addtoqueue} />
         </thead>
         <tbody>
-          {this.state.queue.map((e) => (
-            <QueueElement url={e} remove={() => this.removeelement(e)} />
+          {this.state.queue.reverse().map((e) => (
+            <QueueElement
+              key={e.id}
+              url={e.url}
+              remove={() => this.removeelement(e.id)}
+            />
           ))}
         </tbody>
       </table>

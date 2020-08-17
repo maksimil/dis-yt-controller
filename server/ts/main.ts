@@ -3,12 +3,16 @@ import express from "express";
 import ip from "ip";
 import queueroute from "./queueroute";
 import bodyparser from "body-parser";
+import cors from "cors";
 
 // create app
 const app = express();
 
-// parse POST bodies
+// parse request bodies
 app.use(bodyparser.urlencoded({ extended: true }));
+
+// remove cors problems
+app.use(cors());
 
 // ui
 app.use(express.static(path.join(__dirname, "..", "..", "build")));

@@ -1,3 +1,6 @@
 {
-  "ignore": ["data"]
+  "ignore": ["data"],
+  "events": {
+    "restart": "kill-port 5000"
+  }
 }

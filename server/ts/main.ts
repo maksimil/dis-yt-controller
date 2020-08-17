@@ -4,6 +4,17 @@ import ip from "ip";
 import queueroute from "./queueroute";
 import bodyparser from "body-parser";
 import cors from "cors";
+import Bot from "./bot";
+import fs from "fs";
+
+// read configs
+// config: {token, prefix, port}
+const config = JSON.parse(
+  fs.readFileSync(path.join("server", "config.json"), { encoding: "utf8" })
+);
+
+// create bot
+const bot = new Bot(config.token, config.prefix);
 
 // create app
 const app = express();
@@ -21,7 +32,7 @@ app.use(express.static(path.join(__dirname, "..", "..", "build")));
 app.use("/q", queueroute);
 
 // listening
-const port = 5000;
+const port = config.port;
 
 app.listen(port, () => {
   console.log(`Listening on ${port} http://localhost:${port}`);

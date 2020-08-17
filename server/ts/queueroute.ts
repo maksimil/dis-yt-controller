@@ -51,9 +51,10 @@ router.put("/add", (req, res) => {
     // assinging unique id
     id: uuid4(),
   });
-  writeqdata(queue);
 
-  res.sendStatus(200);
+  // saving and sending new queue
+  writeqdata(queue);
+  res.send(queue);
 });
 
 // remove from queue
@@ -77,8 +78,9 @@ router.delete("/remove", (req, res) => {
     return;
   }
 
+  // saving and sending new queue
   writeqdata(queue);
-  res.sendStatus(200);
+  res.send(queue);
 });
 
 // export router

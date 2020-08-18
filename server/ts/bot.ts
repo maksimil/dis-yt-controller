@@ -1,19 +1,73 @@
-import { Client, Message, TextChannel } from "discord.js";
+import {
+  Client,
+  Message,
+  TextChannel,
+  VoiceChannel,
+  VoiceConnection,
+} from "discord.js";
 
 class Bot {
   client: Client;
   prefix: string;
   mainid: string;
+  vc: VoiceConnection | null;
 
   commands: { [key: string]: (msg: Message) => Promise<void> } = {
     // TODO: help command
+
+    // good command mmmmmmm yesssssss
     rub: async (msg) => {
       msg.channel.send(`mmm yesssssss, <@${msg.author?.id}>`);
     },
+
+    // set main id
     sm: async (msg) => {
       this.mainid = msg.channel.id;
 
       msg.channel.send(`Main id set to ${this.mainid}`);
+    },
+
+    // join a vc
+    join: async (msg) => {
+      // get vc channel id
+      const channelid = msg.member?.voice.channelID;
+      // check if author in a vc
+      if (!channelid) {
+        msg.channel.send("Please join a vc to use this command");
+        return;
+      }
+      // get the channel
+      const channel = this.client.channels.cache.get(channelid) as VoiceChannel;
+
+      // join it
+      channel
+        .join()
+        .then((c) => {
+          // set voice state
+          this.vc = c;
+          // inform
+          msg.channel.send(`Connected to ${channel.name}`);
+        })
+        .catch((e) => {
+          // inform about error
+          msg.channel.send("An error occurred");
+          // log error
+          console.error(e);
+        });
+    },
+
+    // leave a vc
+    leave: async (msg) => {
+      // check if in vc
+      if (this.vc) {
+        // inform
+        msg.channel.send(`Disconnected from ${this.vc.channel.name}`);
+        // disconnect
+        this.vc?.disconnect();
+        this.vc = null;
+      } else {
+        msg.channel.send("Not in vc");
+      }
     },
   };
 
@@ -22,6 +76,7 @@ class Bot {
     this.client = new Client();
     this.prefix = prefix;
     this.mainid = "-1";
+    this.vc = null;
 
     // set activity to cbt
     this.client.on("ready", () => {

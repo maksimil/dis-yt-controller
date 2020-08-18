@@ -1,7 +1,7 @@
 import { Router } from "express";
-import Bot from "./bot";
+import Bot from "../bot";
 
-const createbotroute = (bot: Bot) => {
+const create = (bot: Bot) => {
   // create route
   const router = Router();
 
@@ -20,4 +20,4 @@ const createbotroute = (bot: Bot) => {
   return router;
 };
 
-export default createbotroute;
+export default create;

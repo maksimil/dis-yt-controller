@@ -4,6 +4,7 @@ import {
   TextChannel,
   VoiceChannel,
   VoiceConnection,
+  StreamDispatcher,
 } from "discord.js";
 import ytdl from "ytdl-core";
 
@@ -12,6 +13,9 @@ class Bot {
   prefix: string;
   mainid: string;
   vc: VoiceConnection | null;
+  queue: string[];
+
+  dispatcher: StreamDispatcher | null;
 
   commands: { [key: string]: (msg: Message) => Promise<void> } = {
     // TODO: help command
@@ -67,6 +71,7 @@ class Bot {
         // disconnect
         this.vc?.disconnect();
         this.vc = null;
+        this.dispatcher = null;
       } else {
         msg.channel.send("Not in vc");
       }
@@ -79,6 +84,8 @@ class Bot {
     this.prefix = prefix;
     this.mainid = "-1";
     this.vc = null;
+    this.queue = [];
+    this.dispatcher = null;
 
     // set activity to cbt
     this.client.on("ready", () => {
@@ -115,21 +122,67 @@ class Bot {
     return true;
   };
 
-  // play song from url
+  // play song from url, skips current song
   playurl = (url: string) => {
     // check if in vc
     if (!this.vc) {
       return false;
     }
 
-    // play song
-    const dispatcher = this.vc.play(ytdl(url));
+    // skip current song
+    if (this.dispatcher) {
+      this.dispatcher.end();
+      this.dispatcher = null;
+    }
 
-    // listen for errors
-    dispatcher.on("error", console.error);
+    // add url to the queue
+    this.addtoqueue([url]);
 
     // confirm
     return true;
+  };
+
+  // add url to the queue, play if not playing anithing now
+  addtoqueue = (urls: string[]) => {
+    // add queue
+    this.queue.push(...urls);
+
+    // play if not playing
+    if (!this.dispatcher) {
+      // return if not in vc
+      if (!this.vc) {
+        return;
+      }
+      // play if is in vc
+      this.playqueue();
+    }
+  };
+
+  // play queue
+  playqueue = () => {
+    // return false if no queue
+    if (this.queue.length === 0) return false;
+    if (this.vc) {
+      // start playing first song
+      this.dispatcher = this.vc.play(ytdl(this.queue.shift() as string));
+      // recurse
+      this.dispatcher.on("finish", () => {
+        this.playqueue();
+      });
+      // confirm
+      return true;
+    }
+    // no vc
+    return false;
+  };
+
+  // skip
+  skip = () => {
+    if (this.dispatcher) {
+      this.dispatcher.end();
+      this.dispatcher = null;
+      this.playqueue();
+    }
   };
 }
 

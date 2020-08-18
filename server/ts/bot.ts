@@ -5,6 +5,7 @@ import {
   VoiceChannel,
   VoiceConnection,
 } from "discord.js";
+import ytdl from "ytdl-core";
 
 class Bot {
   client: Client;
@@ -17,6 +18,7 @@ class Bot {
 
     // good command mmmmmmm yesssssss
     rub: async (msg) => {
+      // <@id> are mentions
       msg.channel.send(`mmm yesssssss, <@${msg.author?.id}>`);
     },
 
@@ -110,6 +112,23 @@ class Bot {
     // send message
     (this.client.channels.cache.get(this.mainid) as TextChannel).send(msg);
     // confirm sending to caller
+    return true;
+  };
+
+  // play song from url
+  playurl = (url: string) => {
+    // check if in vc
+    if (!this.vc) {
+      return false;
+    }
+
+    // play song
+    const dispatcher = this.vc.play(ytdl(url));
+
+    // listen for errors
+    dispatcher.on("error", console.error);
+
+    // confirm
     return true;
   };
 }

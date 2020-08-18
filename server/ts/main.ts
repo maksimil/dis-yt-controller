@@ -6,6 +6,7 @@ import bodyparser from "body-parser";
 import cors from "cors";
 import Bot from "./bot";
 import fs from "fs";
+import createbotroute from "./botroute";
 
 // read configs
 // config: {token, prefix, port}
@@ -28,8 +29,9 @@ app.use(cors());
 // ui
 app.use(express.static(path.join(__dirname, "..", "..", "build")));
 
-// api
+// apis
 app.use("/q", queueroute);
+app.use("/bot", createbotroute(bot));
 
 // listening
 const port = config.port;

@@ -11,10 +11,11 @@ class Input extends React.Component<
   render() {
     return (
       <tr>
-        <td>
+        <td className="text">
           <input
             type="text"
             value={this.state.url}
+            placeholder="url"
             onChange={(e) => {
               this.setState({
                 url: e.target.value,

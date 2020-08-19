@@ -1,0 +1,17 @@
+* {
+  font-size: 14pt;
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 0px;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+thead {
+  background-color: lightgreen;
+}
+
+td.text {
+  padding-left: 10px;
+}

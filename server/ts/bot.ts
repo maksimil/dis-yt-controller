@@ -164,18 +164,16 @@ class Bot {
       this.dispatcher = null;
       return false;
     }
-    // return true if already playing
+    // return true if already playing or on pause
     if (this.dispatcher) return true;
 
     if (this.vc) {
-      // getting the url
-      const el = this.queue.shift() as qentry;
-      // adding url to the end if in playlist
-      if (this.mode === "playlist") this.queue.push(el);
       // playing the song
-      this.dispatcher = this.vc.play(ytdl(el.url));
+      this.dispatcher = this.vc.play(ytdl(this.queue[0].url));
       // recurse
       this.dispatcher.on("finish", () => {
+        const el = this.queue.shift() as qentry;
+        if (this.mode === "playlist") this.queue.push(el);
         console.log(this.queue);
         this.dispatcher = null;
         this.playqueue();

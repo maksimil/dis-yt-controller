@@ -21,10 +21,11 @@ const create = (bot: Bot) => {
 
   // add song to queue
   router.put("/add", (req, res) => {
-    // add url
+    // add url and play if not playing
     bot.addurls([req.body["url"]]);
-    // play
-    res.sendStatus(bot.playqueue() ? 200 : 400);
+    bot.playqueue();
+    // return queue
+    res.send(bot.queue);
   });
 
   // skip
@@ -34,7 +35,15 @@ const create = (bot: Bot) => {
 
   // remove
   router.put("/remove", (req, res) => {
-    res.sendStatus(bot.remove(req.body["id"]) ? 200 : 400);
+    // remove by id
+    bot.remove(req.body["id"]);
+    // return queue
+    res.send(bot.queue);
+  });
+
+  // get queue
+  router.get("/getq", (req, res) => {
+    res.send(bot.queue);
   });
 
   return router;

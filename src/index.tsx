@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import App from "./App";
 import axios from "axios";
 
-axios.get("http://localhost:5000/q/q").then((res) => {
+axios.get("http://localhost:5000/getq").then((res) => {
   ReactDOM.render(
     <React.StrictMode>
       <App

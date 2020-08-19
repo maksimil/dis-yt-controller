@@ -27,6 +27,11 @@ const create = (bot: Bot) => {
     res.sendStatus(bot.playqueue() ? 200 : 400);
   });
 
+  // skip
+  router.put("/skip", (req, res) => {
+    res.sendStatus(bot.skip() ? 200 : 400);
+  });
+
   return router;
 };
 

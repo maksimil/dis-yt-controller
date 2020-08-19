@@ -173,7 +173,9 @@ class Bot {
   skip = () => {
     if (this.dispatcher) {
       this.dispatcher.end();
+      return true;
     }
+    return false;
   };
 
   // play/pause

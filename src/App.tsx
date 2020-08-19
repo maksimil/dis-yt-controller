@@ -14,13 +14,13 @@ class App extends React.Component<{ state: AppState }, AppState> {
   state = this.props.state;
 
   addtoqueue = (url: string) => {
-    axios.put("http://localhost:5000/q/add", `url=${url}`).then((res) => {
+    axios.put("http://localhost:5000/add", `url=${url}`).then((res) => {
       this.setState({ queue: res.data });
     });
   };
 
   removeelement = (id: string) => {
-    axios.put(`http://localhost:5000/q/remove`, `id=${id}`).then((res) => {
+    axios.put(`http://localhost:5000/remove`, `id=${id}`).then((res) => {
       this.setState({ queue: res.data });
     });
   };

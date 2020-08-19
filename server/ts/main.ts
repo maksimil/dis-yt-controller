@@ -1,12 +1,11 @@
 import path from "path";
 import express from "express";
 import ip from "ip";
-import createqueueroute from "./routes/queue";
 import bodyparser from "body-parser";
 import cors from "cors";
 import Bot from "./bot";
 import fs from "fs";
-import createbotroute from "./routes/bot";
+import createbotroute from "./botroute";
 
 // read configs
 // config: {token, prefix, port}
@@ -30,8 +29,7 @@ app.use(cors());
 app.use(express.static(path.join(__dirname, "..", "..", "build")));
 
 // apis
-app.use("/q", createqueueroute());
-app.use("/bot", createbotroute(bot));
+app.use(createbotroute(bot));
 
 // listening
 const port = config.port;

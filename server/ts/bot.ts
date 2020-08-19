@@ -7,15 +7,23 @@ import {
   StreamDispatcher,
 } from "discord.js";
 import ytdl from "ytdl-core";
+import { v4 as uuidv4 } from "uuid";
+
+type qentry = {
+  url: string;
+  id: string;
+};
 
 class Bot {
   client: Client;
   prefix: string;
-  mainid: string;
-  vc: VoiceConnection | null;
-  queue: string[];
 
+  mainid: string;
+
+  mode: "queue" | "playlist";
   dispatcher: StreamDispatcher | null;
+  vc: VoiceConnection | null;
+  queue: qentry[];
 
   commands: { [key: string]: (msg: Message) => Promise<void> } = {
     // TODO: help command
@@ -86,6 +94,7 @@ class Bot {
     this.vc = null;
     this.queue = [];
     this.dispatcher = null;
+    this.mode = "queue";
 
     // set activity to cbt
     this.client.on("ready", () => {
@@ -122,51 +131,51 @@ class Bot {
     return true;
   };
 
-  // play song from url, skips current song
-  playurl = (url: string) => {
-    // check if in vc
-    if (!this.vc) {
-      return false;
-    }
-
-    // skip current song
-    if (this.dispatcher) {
-      this.dispatcher.end();
-      this.dispatcher = null;
-    }
-
-    // add url to the queue
-    this.addtoqueue([url]);
-
-    // confirm
-    return true;
+  addurls = (urls: string[]) => {
+    // add urls to queue and attach ids
+    this.queue.push(
+      ...urls.map((url) => {
+        return {
+          url,
+          id: uuidv4(),
+        };
+      })
+    );
   };
 
-  // add url to the queue, play if not playing anithing now
-  addtoqueue = (urls: string[]) => {
-    // add queue
-    this.queue.push(...urls);
-
-    // play if not playing
-    if (!this.dispatcher) {
-      // return if not in vc
-      if (!this.vc) {
-        return;
+  remove = (id: string) => {
+    // filter the ones without id
+    let found = false;
+    this.queue = this.queue.filter((e) => {
+      if (e.id === id) {
+        found = true;
+        return false;
       }
-      // play if is in vc
-      this.playqueue();
-    }
+      return true;
+    });
+    return found;
   };
 
   // play queue
   playqueue = () => {
     // return false if no queue
-    if (this.queue.length === 0) return false;
+    if (this.queue.length === 0) {
+      console.log("No queue");
+      this.dispatcher = null;
+      return false;
+    }
+    // return true if already playing or on pause
+    if (this.dispatcher) return true;
+
     if (this.vc) {
-      // start playing first song
-      this.dispatcher = this.vc.play(ytdl(this.queue.shift() as string));
+      // playing the song
+      this.dispatcher = this.vc.play(ytdl(this.queue[0].url));
       // recurse
       this.dispatcher.on("finish", () => {
+        const el = this.queue.shift() as qentry;
+        if (this.mode === "playlist") this.queue.push(el);
+        console.log(this.queue);
+        this.dispatcher = null;
         this.playqueue();
       });
       // confirm
@@ -180,9 +189,24 @@ class Bot {
   skip = () => {
     if (this.dispatcher) {
       this.dispatcher.end();
-      this.dispatcher = null;
-      this.playqueue();
+      return true;
     }
+    return false;
+  };
+
+  // play/pause
+  p = () => {
+    // return play attempt if not playing
+    if (!this.dispatcher) {
+      return this.playqueue();
+    }
+    // resume if paused, pause if not
+    if (this.dispatcher.paused) {
+      this.dispatcher.resume();
+    } else {
+      this.dispatcher.pause();
+    }
+    return true;
   };
 }
 

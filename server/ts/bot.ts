@@ -131,11 +131,29 @@ class Bot {
     return true;
   };
 
-  addurl = (url: string) => {
-    this.queue.push({
-      url,
-      id: uuidv4(),
+  addurls = (urls: string[]) => {
+    // add urls to queue and attach ids
+    this.queue.push(
+      ...urls.map((url) => {
+        return {
+          url,
+          id: uuidv4(),
+        };
+      })
+    );
+  };
+
+  remove = (id: string) => {
+    // filter the ones without id
+    let found = false;
+    this.queue = this.queue.filter((e) => {
+      if (e.id === id) {
+        found = true;
+        return false;
+      }
+      return true;
     });
+    return found;
   };
 
   // play queue

@@ -11,11 +11,13 @@ import ytdl from "ytdl-core";
 class Bot {
   client: Client;
   prefix: string;
+
   mainid: string;
+
+  mode: "queue" | "playlist";
+  dispatcher: StreamDispatcher | null;
   vc: VoiceConnection | null;
   queue: string[];
-
-  dispatcher: StreamDispatcher | null;
 
   commands: { [key: string]: (msg: Message) => Promise<void> } = {
     // TODO: help command
@@ -86,6 +88,7 @@ class Bot {
     this.vc = null;
     this.queue = [];
     this.dispatcher = null;
+    this.mode = "queue";
 
     // set activity to cbt
     this.client.on("ready", () => {
@@ -122,13 +125,12 @@ class Bot {
     return true;
   };
 
-  // play song from url, skips current song
+  // play song from url, skips current song, can be executed only in queue mode
   playurl = (url: string) => {
+    // check if in queue mode
+    if (this.mode !== "queue") return false;
     // check if in vc
-    if (!this.vc) {
-      return false;
-    }
-
+    if (!this.vc) return false;
     // skip current song
     if (this.dispatcher) {
       this.dispatcher.end();
@@ -163,8 +165,12 @@ class Bot {
     // return false if no queue
     if (this.queue.length === 0) return false;
     if (this.vc) {
-      // start playing first song
-      this.dispatcher = this.vc.play(ytdl(this.queue.shift() as string));
+      // getting the url
+      const url = this.queue.shift() as string;
+      // adding url to the end if in playlist
+      if (this.mode === "playlist") this.queue.push(url);
+      // playing the song
+      this.dispatcher = this.vc.play(ytdl(url));
       // recurse
       this.dispatcher.on("finish", () => {
         this.playqueue();

@@ -1,7 +1,6 @@
 import React from "react";
-import Input from "./components/Input";
-import QueueElement from "./components/QueueElement";
 import axios from "axios";
+import List from "./components/List";
 
 type AppState = {
   queue: {
@@ -27,20 +26,11 @@ class App extends React.Component<{ state: AppState }, AppState> {
 
   render() {
     return (
-      <table>
-        <thead>
-          <Input add={this.addtoqueue} />
-        </thead>
-        <tbody>
-          {this.state.queue.reverse().map((e) => (
-            <QueueElement
-              key={e.id}
-              url={e.url}
-              remove={() => this.removeelement(e.id)}
-            />
-          ))}
-        </tbody>
-      </table>
+      <List
+        queue={this.state.queue}
+        remove={this.removeelement}
+        add={this.addtoqueue}
+      />
     );
   }
 }

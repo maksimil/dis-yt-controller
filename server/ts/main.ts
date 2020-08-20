@@ -24,6 +24,9 @@ const server = http.createServer(app);
 // create ws
 socket(bot, server);
 
+// serve public folder
+app.use(express.static(path.join(__dirname, "..", "..", "build")));
+
 // listening
 const port = config.port;
 const timeout = 1000;

@@ -16,5 +16,5 @@ button.cpanel:hover {
 }
 
 button.cpanel:focus {
-  background-color: transparent;
+  background-color: #dadada;
 }

@@ -25,6 +25,12 @@ class Bot {
   vc: VoiceConnection | null = null;
   queue: qentry[] = [];
 
+  listeners: { [key: string]: () => void } = {};
+
+  calllisteners = () => {
+    Object.keys(this.listeners).forEach((k) => this.listeners[k]());
+  };
+
   commands: { [key: string]: (msg: Message) => Promise<void> } = {
     // TODO: help command
 
@@ -61,6 +67,8 @@ class Bot {
           this.vc = c;
           // inform
           msg.channel.send(`Connected to ${channel.name}`);
+          // listeners
+          this.calllisteners();
         })
         .catch((e) => {
           // inform about error
@@ -80,6 +88,8 @@ class Bot {
         this.vc?.disconnect();
         this.vc = null;
         this.dispatcher = null;
+        // listeners
+        this.calllisteners();
       } else {
         msg.channel.send("Not in vc");
       }
@@ -135,6 +145,8 @@ class Bot {
         };
       })
     );
+    // listeners
+    this.calllisteners();
   };
 
   remove = (id: string) => {
@@ -143,6 +155,7 @@ class Bot {
     this.queue = this.queue.filter((e) => {
       if (e.id === id) {
         found = true;
+        this.calllisteners();
         return false;
       }
       return true;
@@ -154,8 +167,8 @@ class Bot {
   playqueue = () => {
     // return false if no queue
     if (this.queue.length === 0) {
-      console.log("No queue");
       this.dispatcher = null;
+      this.calllisteners();
       return false;
     }
     // return true if already playing or on pause
@@ -168,7 +181,7 @@ class Bot {
       this.dispatcher.on("finish", () => {
         const el = this.queue.shift() as qentry;
         if (this.mode === "playlist") this.queue.push(el);
-        console.log(this.queue);
+        this.calllisteners();
         this.dispatcher = null;
         this.playqueue();
       });
@@ -183,6 +196,7 @@ class Bot {
   skip = () => {
     if (this.dispatcher) {
       this.dispatcher.end();
+      this.calllisteners();
       return true;
     }
     return false;
@@ -200,11 +214,14 @@ class Bot {
     } else {
       this.dispatcher.pause();
     }
+    this.calllisteners();
     return true;
   };
 
-  ispaused = () => {
-    return this.dispatcher?.paused;
+  playstatus = (): "play" | "paused" | "notplaying" => {
+    if (!this.dispatcher) return "notplaying";
+    if (this.dispatcher.paused) return "paused";
+    else return "play";
   };
 
   getchannel = () => {

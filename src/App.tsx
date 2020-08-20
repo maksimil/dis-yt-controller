@@ -28,8 +28,12 @@ class App extends React.Component<AppState, AppState> {
     this.state.socket.emit("p");
   };
 
+  skip = () => {
+    this.state.socket.emit("skip");
+  };
+
   render() {
-    const { paused, queue, channel } = this.state.state;
+    const { pstatus, queue, channel } = this.state.state;
     return (
       <table>
         <tbody>
@@ -40,7 +44,11 @@ class App extends React.Component<AppState, AppState> {
           </tr>
           <tr>
             <td>
-              <ControlPanel paused={paused} pause={this.pause} />
+              <ControlPanel
+                pstatus={pstatus}
+                skip={this.skip}
+                pause={this.pause}
+              />
             </td>
           </tr>
           <tr>

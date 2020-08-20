@@ -11,5 +11,5 @@ type AppState = {
 type State = {
   channel: string | undefined;
   queue: qentry[];
-  paused: boolean | undefined;
+  pstatus: "play" | "paused" | "notplaying";
 };

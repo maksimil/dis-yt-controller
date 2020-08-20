@@ -15,15 +15,15 @@ type qentry = {
 };
 
 class Bot {
-  client: Client;
+  client: Client = new Client();
   prefix: string;
 
-  mainid: string;
+  mainid: string = "-1";
 
-  mode: "queue" | "playlist";
-  dispatcher: StreamDispatcher | null;
-  vc: VoiceConnection | null;
-  queue: qentry[];
+  mode: "queue" | "playlist" = "queue";
+  dispatcher: StreamDispatcher | null = null;
+  vc: VoiceConnection | null = null;
+  queue: qentry[] = [];
 
   commands: { [key: string]: (msg: Message) => Promise<void> } = {
     // TODO: help command
@@ -88,13 +88,7 @@ class Bot {
 
   constructor(token: string, prefix: string) {
     // initialize the client
-    this.client = new Client();
     this.prefix = prefix;
-    this.mainid = "-1";
-    this.vc = null;
-    this.queue = [];
-    this.dispatcher = null;
-    this.mode = "queue";
 
     // set activity to cbt
     this.client.on("ready", () => {

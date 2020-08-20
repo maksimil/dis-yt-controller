@@ -5,10 +5,10 @@ import socketio from "socket.io-client";
 
 const socket = socketio("http://localhost:5000");
 
-socket.on("update", (data: qentry[]) => {
+socket.on("update", (state: State) => {
   ReactDOM.render(
     <React.StrictMode>
-      <App queue={data} socket={socket} />
+      <App state={state} socket={socket} />
     </React.StrictMode>,
     document.getElementById("root")
   );

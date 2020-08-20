@@ -6,7 +6,11 @@ const createio = (bot: Bot, server: Server) => {
   const io = socketio(server);
 
   const update = () => {
-    io.emit("update", bot.queue);
+    io.emit("update", {
+      queue: bot.queue,
+      paused: bot.ispaused(),
+      channel: bot.getchannel(),
+    });
   };
 
   io.on("connect", (socket) => {
@@ -34,7 +38,7 @@ const createio = (bot: Bot, server: Server) => {
       update();
     });
 
-    socket.emit("update", bot.queue);
+    update();
   });
 
   return io;

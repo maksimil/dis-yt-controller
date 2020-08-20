@@ -1,10 +1,15 @@
 import React from "react";
 
-const ControlPanel: React.FC<{}> = () => {
+const ControlPanel: React.FC<{
+  pause: () => void;
+  paused: boolean | undefined;
+}> = ({ pause, paused }) => {
   return (
     <div className="ccontainer">
       <div className="cpanel">
-        <button className="cpanel">resume</button>
+        <button className="cpanel" onClick={pause}>
+          {paused ? "resume" : "pause"}
+        </button>
       </div>
       <div className="cpanel">
         <button className="cpanel">skip</button>

@@ -1,14 +1,7 @@
 import React from "react";
 import List from "./components/List";
 import ControlPanel from "./components/ControlPanel";
-
-type AppState = {
-  socket: SocketIOClient.Socket;
-  queue: {
-    url: string;
-    id: string;
-  }[];
-};
+import StatusBar from "./components/StatusBar";
 
 class App extends React.Component<AppState, AppState> {
   constructor(props: AppState) {
@@ -16,9 +9,9 @@ class App extends React.Component<AppState, AppState> {
 
     this.state = props;
 
-    this.state.socket.on("update", (data: qentry[]) => {
+    this.state.socket.on("update", (state: State) => {
       this.setState({
-        queue: data,
+        state,
       });
     });
   }
@@ -31,19 +24,29 @@ class App extends React.Component<AppState, AppState> {
     this.state.socket.emit("remove", id);
   };
 
+  pause = () => {
+    this.state.socket.emit("p");
+  };
+
   render() {
+    const { paused, queue, channel } = this.state.state;
     return (
       <table>
         <tbody>
           <tr>
             <td>
-              <ControlPanel />
+              <StatusBar channel={channel} />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <ControlPanel paused={paused} pause={this.pause} />
             </td>
           </tr>
           <tr>
             <td>
               <List
-                queue={this.state.queue}
+                queue={queue}
                 remove={this.removeelement}
                 add={this.addtoqueue}
               />

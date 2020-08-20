@@ -208,6 +208,14 @@ class Bot {
     }
     return true;
   };
+
+  ispaused = () => {
+    return this.dispatcher?.paused;
+  };
+
+  getchannel = () => {
+    return this.vc?.channel.name;
+  };
 }
 
 // export Bot

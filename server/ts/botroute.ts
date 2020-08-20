@@ -9,6 +9,11 @@ const create = (bot: Bot) => {
   router.put("/sm", (req, res) => {
     // get message
     const msg = req.body["msg"];
+    // check if request has msg
+    if (!msg) {
+      res.sendStatus(400);
+      return;
+    }
     // send message to main, if not exists send 400 back
     res.sendStatus(bot.sendmain(msg) ? 200 : 400);
   });
@@ -21,8 +26,14 @@ const create = (bot: Bot) => {
 
   // add song to queue
   router.put("/add", (req, res) => {
+    const url = req.body["url"];
+    // check if  request has url
+    if (!url) {
+      res.sendStatus(400);
+      return;
+    }
     // add url and play if not playing
-    bot.addurls([req.body["url"]]);
+    bot.addurls([url]);
     bot.playqueue();
     // return queue
     res.send(bot.queue);
@@ -35,8 +46,13 @@ const create = (bot: Bot) => {
 
   // remove
   router.put("/remove", (req, res) => {
+    const id = req.body["id"];
+    if (!id) {
+      res.sendStatus(400);
+      return;
+    }
     // remove by id
-    bot.remove(req.body["id"]);
+    bot.remove(id);
     // return queue
     res.send(bot.queue);
   });

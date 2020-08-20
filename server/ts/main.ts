@@ -6,6 +6,8 @@ import cors from "cors";
 import Bot from "./bot";
 import fs from "fs";
 import createbotroute from "./botroute";
+import http from "http";
+import socketio from "socket.io";
 
 // read configs
 // config: {token, prefix, port}
@@ -18,6 +20,17 @@ const bot = new Bot(config.token, config.prefix);
 
 // create app
 const app = express();
+
+// create server
+const server = http.createServer(app);
+
+// create ws
+const io = socketio(server);
+
+// connect to user
+io.on("connect", (socket) => {
+  socket.emit("update", bot.queue);
+});
 
 // parse request bodies
 app.use(bodyparser.urlencoded({ extended: true }));
@@ -34,7 +47,7 @@ app.use(createbotroute(bot));
 // listening
 const port = config.port;
 
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`Listening on ${port} http://localhost:${port}`);
   console.log(`Listening on ${port} http://${ip.address()}:${port}`);
 });

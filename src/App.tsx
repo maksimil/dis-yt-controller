@@ -4,14 +4,25 @@ import List from "./components/List";
 import ControlPanel from "./components/ControlPanel";
 
 type AppState = {
+  socket: SocketIOClient.Socket;
   queue: {
     url: string;
     id: string;
   }[];
 };
 
-class App extends React.Component<{ state: AppState }, AppState> {
-  state = this.props.state;
+class App extends React.Component<AppState, AppState> {
+  constructor(props: AppState) {
+    super(props);
+
+    this.state = props;
+
+    this.state.socket.on("update", (data: qentry[]) => {
+      this.setState({
+        queue: data,
+      });
+    });
+  }
 
   addtoqueue = (url: string) => {
     axios.put("http://localhost:5000/add", `url=${url}`).then((res) => {

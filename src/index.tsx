@@ -1,16 +1,14 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App";
-import axios from "axios";
+import socketio from "socket.io-client";
 
-axios.get("http://localhost:5000/getq").then((res) => {
+const socket = socketio("http://localhost:5000");
+
+socket.on("update", (data: qentry[]) => {
   ReactDOM.render(
     <React.StrictMode>
-      <App
-        state={{
-          queue: res.data,
-        }}
-      />
+      <App queue={data} socket={socket} />
     </React.StrictMode>,
     document.getElementById("root")
   );

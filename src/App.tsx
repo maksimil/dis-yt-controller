@@ -1,5 +1,4 @@
 import React from "react";
-import axios from "axios";
 import List from "./components/List";
 import ControlPanel from "./components/ControlPanel";
 
@@ -25,15 +24,11 @@ class App extends React.Component<AppState, AppState> {
   }
 
   addtoqueue = (url: string) => {
-    axios.put("http://localhost:5000/add", `url=${url}`).then((res) => {
-      this.setState({ queue: res.data });
-    });
+    this.state.socket.emit("add", url);
   };
 
   removeelement = (id: string) => {
-    axios.put(`http://localhost:5000/remove`, `id=${id}`).then((res) => {
-      this.setState({ queue: res.data });
-    });
+    this.state.socket.emit("remove", id);
   };
 
   render() {

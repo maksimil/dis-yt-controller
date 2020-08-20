@@ -7,7 +7,7 @@ import Bot from "./bot";
 import fs from "fs";
 import createbotroute from "./botroute";
 import http from "http";
-import socketio from "socket.io";
+import socket from "./socket";
 
 // read configs
 // config: {token, prefix, port}
@@ -25,12 +25,7 @@ const app = express();
 const server = http.createServer(app);
 
 // create ws
-const io = socketio(server);
-
-// connect to user
-io.on("connect", (socket) => {
-  socket.emit("update", bot.queue);
-});
+socket(bot, server);
 
 // parse request bodies
 app.use(bodyparser.urlencoded({ extended: true }));

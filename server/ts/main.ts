@@ -46,8 +46,18 @@ app.use(createbotroute(bot));
 
 // listening
 const port = config.port;
+const timeout = 1000;
 
-server.listen(port, () => {
-  console.log(`Listening on ${port} http://localhost:${port}`);
-  console.log(`Listening on ${port} http://${ip.address()}:${port}`);
-});
+const connect = () => {
+  try {
+    server.listen(port, () => {
+      console.log(`Listening on ${port} http://localhost:${port}`);
+      console.log(`Listening on ${port} http://${ip.address()}:${port}`);
+    });
+  } catch (e) {
+    console.error(e);
+    console.log(`Reconnectiong after ${timeout}ms`);
+    setTimeout(connect, timeout);
+  }
+};
+connect();

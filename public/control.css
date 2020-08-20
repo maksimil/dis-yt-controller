@@ -1,0 +1,20 @@
+div.ccontainer {
+  display: flex;
+}
+
+div.cpanel {
+  flex: 1;
+  text-align: center;
+}
+
+button.cpanel {
+  width: 100%;
+}
+
+button.cpanel:hover {
+  background-color: lightgray;
+}
+
+button.cpanel:focus {
+  background-color: transparent;
+}

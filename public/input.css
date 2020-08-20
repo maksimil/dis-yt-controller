@@ -4,15 +4,9 @@ input {
   border: none;
   margin: 0px;
   padding: 0px;
-  border-bottom: 1px solid transparent;
-}
-
-input:hover {
-  border-bottom: 1px solid gray;
 }
 
 input:focus {
   border: none;
   outline: none;
-  border-bottom: 1px solid black;
 }

@@ -25,6 +25,7 @@ class Input extends React.Component<
         </td>
         <td>
           <button
+            className="list"
             onClick={() => {
               this.props.add(this.state.url);
               this.setState({ url: "" });

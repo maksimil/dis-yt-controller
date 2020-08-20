@@ -7,7 +7,9 @@ const QueueElement: React.FC<{ url: string; remove: () => void }> = ({
   <tr>
     <td className="text">{url}</td>
     <td>
-      <button onClick={remove}>remove</button>
+      <button className="list" onClick={remove}>
+        remove
+      </button>
     </td>
   </tr>
 );

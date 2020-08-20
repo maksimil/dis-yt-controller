@@ -12,6 +12,10 @@ thead {
   background-color: lightgreen;
 }
 
+td {
+  padding: 0px;
+}
+
 td.text {
   padding-left: 10px;
 }

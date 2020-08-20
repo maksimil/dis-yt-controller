@@ -1,6 +1,7 @@
 import React from "react";
 import axios from "axios";
 import List from "./components/List";
+import ControlPanel from "./components/ControlPanel";
 
 type AppState = {
   queue: {
@@ -26,11 +27,24 @@ class App extends React.Component<{ state: AppState }, AppState> {
 
   render() {
     return (
-      <List
-        queue={this.state.queue}
-        remove={this.removeelement}
-        add={this.addtoqueue}
-      />
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <ControlPanel />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <List
+                queue={this.state.queue}
+                remove={this.removeelement}
+                add={this.addtoqueue}
+              />
+            </td>
+          </tr>
+        </tbody>
+      </table>
     );
   }
 }

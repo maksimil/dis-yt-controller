@@ -1,0 +1,13 @@
+button.list {
+  text-align: center;
+  width: 100%;
+  border-bottom: 1px solid transparent;
+}
+
+button.list:hover {
+  border-bottom: 1px solid gray;
+}
+
+button.list:focus {
+  border-bottom: 1px solid black;
+}

@@ -1,19 +1,8 @@
 button {
   text-align: center;
 
-  width: 100%;
-
   border: none;
   outline: none;
 
   background-color: transparent;
-  border-bottom: 1px solid transparent;
-}
-
-button:hover {
-  border-bottom: 1px solid gray;
-}
-
-button:focus {
-  border-bottom: 1px solid black;
 }

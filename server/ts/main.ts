@@ -1,11 +1,8 @@
 import path from "path";
 import express from "express";
 import ip from "ip";
-import bodyparser from "body-parser";
-import cors from "cors";
 import Bot from "./bot";
 import fs from "fs";
-import createbotroute from "./botroute";
 import http from "http";
 import socket from "./socket";
 
@@ -26,18 +23,6 @@ const server = http.createServer(app);
 
 // create ws
 socket(bot, server);
-
-// parse request bodies
-app.use(bodyparser.urlencoded({ extended: true }));
-
-// remove cors problems
-app.use(cors());
-
-// ui
-app.use(express.static(path.join(__dirname, "..", "..", "build")));
-
-// apis
-app.use(createbotroute(bot));
 
 // listening
 const port = config.port;

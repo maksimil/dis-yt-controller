@@ -23,9 +23,12 @@ class CacheMap<D> {
   };
 
   load = (path: string) => {
-    if (fs.existsSync(path))
+    try {
       this.cache = JSON.parse(fs.readFileSync(path, { encoding: "utf8" }));
-    this.save(path);
+    } catch (e) {
+      console.error(e);
+      this.save(path);
+    }
   };
 
   save = (path?: string) => {

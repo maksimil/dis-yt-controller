@@ -11,6 +11,7 @@ const createio = (bot: Bot, server: Server) => {
       queue,
       pstatus: bot.playstatus(),
       channel: bot.getchannel(),
+      volume: bot.getvolume(),
     });
   };
 
@@ -20,6 +21,7 @@ const createio = (bot: Bot, server: Server) => {
       queue: bot.getqueuecached(),
       pstatus: bot.playstatus(),
       channel: bot.getchannel(),
+      volume: bot.getvolume(),
     });
   };
 

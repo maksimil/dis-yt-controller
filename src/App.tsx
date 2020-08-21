@@ -33,13 +33,13 @@ class App extends React.Component<AppState, AppState> {
   };
 
   render() {
-    const { pstatus, queue, channel } = this.state.state;
+    const { pstatus, queue, channel, volume } = this.state.state;
     return (
       <table>
         <tbody>
           <tr>
             <td>
-              <StatusBar channel={channel} />
+              <StatusBar channel={channel} volume={volume} />
             </td>
           </tr>
           <tr>

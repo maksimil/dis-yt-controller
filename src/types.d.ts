@@ -18,6 +18,7 @@ type State = {
   channel: string | undefined;
   queue: qentry[];
   pstatus: "play" | "paused" | "notplaying";
+  volume: number | undefined;
 };
 
 declare module "*.json" {

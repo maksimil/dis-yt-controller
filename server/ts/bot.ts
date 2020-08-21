@@ -325,6 +325,17 @@ class Bot {
       };
     });
   };
+
+  changevolume = (fn: (v: number) => number) => {
+    this.listenables.change((v) => {
+      v.dispatcher?.setVolume(fn(v.dispatcher.volume));
+      return v;
+    });
+  };
+
+  getvolume = () => {
+    return this.listenables.get((v) => v.dispatcher?.volume);
+  };
 }
 
 // export Bot

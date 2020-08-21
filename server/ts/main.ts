@@ -25,7 +25,7 @@ const server = http.createServer(app);
 socket(bot, server);
 
 // serve public folder
-app.use(express.static(path.join(__dirname, "..", "..", "build")));
+app.use(express.static(path.join("build")));
 
 // listening
 const port = config.port;

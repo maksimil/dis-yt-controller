@@ -14,7 +14,11 @@ const List: React.FC<{
       </thead>
       <tbody>
         {queue.reverse().map((e) => (
-          <QueueElement key={e.id} url={e.url} remove={() => remove(e.id)} />
+          <QueueElement
+            key={e.id}
+            title={e.info.title}
+            remove={() => remove(e.id)}
+          />
         ))}
       </tbody>
     </table>

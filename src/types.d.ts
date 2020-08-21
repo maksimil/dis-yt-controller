@@ -1,5 +1,7 @@
 type qentry = {
-  url: string;
+  info: {
+    title: string;
+  };
   id: string;
 };
 

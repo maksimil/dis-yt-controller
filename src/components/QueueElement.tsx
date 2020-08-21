@@ -1,11 +1,11 @@
 import React from "react";
 
-const QueueElement: React.FC<{ url: string; remove: () => void }> = ({
-  url,
+const QueueElement: React.FC<{ title: string; remove: () => void }> = ({
+  title,
   remove,
 }) => (
   <tr>
-    <td className="text">{url}</td>
+    <td className="text">{title}</td>
     <td>
       <button className="list" onClick={remove}>
         remove

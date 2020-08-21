@@ -8,6 +8,8 @@ import {
 } from "discord.js";
 import ytdl from "ytdl-core";
 import { v4 as uuidv4 } from "uuid";
+import CacheMap from "./cachemap";
+import path from "path";
 
 type qentry = {
   url: string;
@@ -54,6 +56,20 @@ type botlistenables = {
   dispatcher: StreamDispatcher | null;
 };
 
+type vidinfo = {
+  title: string;
+};
+
+const getvidinfo = (url: string) => {
+  return new Promise<vidinfo>((res) => {
+    ytdl.getInfo(url).then((v) => {
+      res({
+        title: v.videoDetails.title,
+      });
+    });
+  });
+};
+
 class Bot {
   client: Client = new Client();
   prefix: string;
@@ -67,6 +83,11 @@ class Bot {
     vc: null,
     dispatcher: null,
   } as botlistenables);
+
+  queueinfocache: CacheMap<vidinfo> = new CacheMap(
+    getvidinfo,
+    path.join("data", "infos.cache.json")
+  );
 
   addlistener = (id: string, fn: () => void) => {
     this.listenables.addlistener((v) => fn(), id);
@@ -283,10 +304,15 @@ class Bot {
     });
   };
 
-  getqueue = () => {
-    return this.listenables.get((v) => {
+  getqueue = async () => {
+    const queue = this.listenables.get((v) => {
       return v.queue;
     });
+    return Promise.all(
+      queue.map(async ({ id, url }: qentry) => {
+        return { id, info: await this.queueinfocache.get(url) };
+      })
+    );
   };
 }
 

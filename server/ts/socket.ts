@@ -5,9 +5,9 @@ import { Server } from "http";
 const createio = (bot: Bot, server: Server) => {
   const io = socketio(server);
 
-  const update = () => {
+  const update = async () => {
     io.emit("update", {
-      queue: bot.getqueue(),
+      queue: await bot.getqueue(),
       pstatus: bot.playstatus(),
       channel: bot.getchannel(),
     });

@@ -155,11 +155,11 @@ class Bot {
     this.queue = this.queue.filter((e) => {
       if (e.id === id) {
         found = true;
-        this.calllisteners();
         return false;
       }
       return true;
     });
+    this.calllisteners();
     return found;
   };
 

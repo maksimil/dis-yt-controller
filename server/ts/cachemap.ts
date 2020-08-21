@@ -18,6 +18,10 @@ class CacheMap<D> {
     return this.cache[v];
   };
 
+  getcached = (v: string, def: D) => {
+    return this.cache[v] || def;
+  };
+
   load = (path: string) => {
     if (fs.existsSync(path))
       this.cache = JSON.parse(fs.readFileSync(path, { encoding: "utf8" }));

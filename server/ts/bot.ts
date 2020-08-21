@@ -305,14 +305,19 @@ class Bot {
   };
 
   getqueue = async () => {
-    const queue = this.listenables.get((v) => {
-      return v.queue;
-    });
+    const queue = this.listenables.get((v) => v.queue);
     return Promise.all(
-      queue.map(async ({ id, url }: qentry) => {
+      queue.map(async ({ id, url }) => {
         return { id, info: await this.queueinfocache.get(url) };
       })
     );
+  };
+
+  getqueuecached = () => {
+    const queue = this.listenables.get((v) => v.queue);
+    return queue.map(({ id, url }) => {
+      return { id, info: this.queueinfocache.getcached(url, { title: url }) };
+    });
   };
 }
 

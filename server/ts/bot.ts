@@ -326,9 +326,9 @@ class Bot {
     });
   };
 
-  changevolume = (fn: (v: number) => number) => {
+  setvolume = (volume: number) => {
     this.listenables.change((v) => {
-      v.dispatcher?.setVolume(fn(v.dispatcher.volume));
+      v.dispatcher?.setVolume(volume);
       return v;
     });
   };

@@ -50,6 +50,10 @@ const createio = (bot: Bot, server: Server) => {
       bot.p();
     });
 
+    socket.on("volume", (volume: number) => {
+      bot.setvolume(volume);
+    });
+
     update();
   });
 

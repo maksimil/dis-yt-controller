@@ -24,3 +24,7 @@ td.time {
   padding-left: 10px;
   text-align: right;
 }
+
+td.vidtitle:hover {
+  text-decoration: underline;
+}

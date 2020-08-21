@@ -1,16 +1,9 @@
 import path from "path";
 import express from "express";
-import ip from "ip";
 import Bot from "./bot";
-import fs from "fs";
 import http from "http";
 import socket from "./socket";
-
-// read configs
-// config: {token, prefix, port}
-const config = JSON.parse(
-  fs.readFileSync(path.join("server", "config.json"), { encoding: "utf8" })
-);
+import config from "../config.json";
 
 // create bot
 const bot = new Bot(config.token, config.prefix);
@@ -30,12 +23,13 @@ app.use(express.static(path.join("build")));
 // listening
 const port = config.port;
 const timeout = 1000;
+const ip = config.LANip;
 
 const connect = () => {
   try {
-    server.listen(port, () => {
+    server.listen(port, ip, () => {
       console.log(`Listening on ${port} http://localhost:${port}`);
-      console.log(`Listening on ${port} http://${ip.address()}:${port}`);
+      console.log(`Listening on ${port} http://${ip}:${port}`);
     });
   } catch (e) {
     console.error(e);

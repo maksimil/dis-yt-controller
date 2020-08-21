@@ -310,7 +310,7 @@ class Bot {
     const queue = this.listenables.get((v) => v.queue);
     return Promise.all(
       queue.map(async ({ id, url }) => {
-        return { id, info: await this.queueinfocache.get(url) };
+        return { id, url, info: await this.queueinfocache.get(url) };
       })
     );
   };
@@ -320,6 +320,7 @@ class Bot {
     return queue.map(({ id, url }) => {
       return {
         id,
+        url,
         info: this.queueinfocache.getcached(url, { title: url, duration: 0 }),
       };
     });

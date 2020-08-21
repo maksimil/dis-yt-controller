@@ -6,6 +6,7 @@ type vidinfo = {
 type qentry = {
   info: vidinfo;
   id: string;
+  url: string;
 };
 
 type AppState = {
@@ -18,3 +19,8 @@ type State = {
   queue: qentry[];
   pstatus: "play" | "paused" | "notplaying";
 };
+
+declare module "*.json" {
+  const value: any;
+  export default value;
+}

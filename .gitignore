@@ -25,4 +25,6 @@ yarn-error.log*
 # server
 /server/js
 /data
-/server/config.json
+
+#configs, containing private data (bot token, etc)
+config.json

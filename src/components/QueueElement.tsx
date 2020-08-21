@@ -11,12 +11,15 @@ const tts = (s: number) => {
   return `${s}`;
 };
 
-const QueueElement: React.FC<{ info: vidinfo; remove: () => void }> = ({
-  info: { title, duration },
-  remove,
-}) => (
+const QueueElement: React.FC<{
+  info: vidinfo;
+  url: string;
+  remove: () => void;
+}> = ({ info: { title, duration }, remove, url }) => (
   <tr>
-    <td className="text">{title}</td>
+    <td className="text vidtitle" onClick={() => window.open(url, "blank")}>
+      {title}
+    </td>
     <td className="time">{tts(duration)}</td>
     <td>
       <button className="list" onClick={remove}>

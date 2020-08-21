@@ -1,5 +1,6 @@
 input {
-  width: 200pt;
+  min-width: 200pt;
+  width: 100%;
   background-color: transparent;
   border: none;
   margin: 0px;

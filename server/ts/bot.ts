@@ -58,6 +58,7 @@ type botlistenables = {
 
 type vidinfo = {
   title: string;
+  duration: number;
 };
 
 const getvidinfo = (url: string) => {
@@ -65,6 +66,7 @@ const getvidinfo = (url: string) => {
     ytdl.getInfo(url).then((v) => {
       res({
         title: v.videoDetails.title,
+        duration: parseInt(v.videoDetails.lengthSeconds),
       });
     });
   });
@@ -316,7 +318,10 @@ class Bot {
   getqueuecached = () => {
     const queue = this.listenables.get((v) => v.queue);
     return queue.map(({ id, url }) => {
-      return { id, info: this.queueinfocache.getcached(url, { title: url }) };
+      return {
+        id,
+        info: this.queueinfocache.getcached(url, { title: url, duration: 0 }),
+      };
     });
   };
 }

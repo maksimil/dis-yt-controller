@@ -1,7 +1,10 @@
+type vidinfo = {
+  title: string;
+  duration: number;
+};
+
 type qentry = {
-  info: {
-    title: string;
-  };
+  info: vidinfo;
   id: string;
 };
 

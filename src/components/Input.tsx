@@ -11,7 +11,7 @@ class Input extends React.Component<
   render() {
     return (
       <tr>
-        <td className="text">
+        <td className="text" colSpan={2}>
           <input
             type="text"
             value={this.state.url}

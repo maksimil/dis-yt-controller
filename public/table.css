@@ -19,3 +19,8 @@ td {
 td.text {
   padding-left: 10px;
 }
+
+td.time {
+  padding-left: 10px;
+  text-align: right;
+}

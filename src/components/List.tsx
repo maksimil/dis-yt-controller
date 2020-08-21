@@ -13,12 +13,8 @@ const List: React.FC<{
         <Input add={add} />
       </thead>
       <tbody>
-        {queue.reverse().map((e) => (
-          <QueueElement
-            key={e.id}
-            title={e.info.title}
-            remove={() => remove(e.id)}
-          />
+        {queue.reverse().map(({ id, info }) => (
+          <QueueElement key={id} info={info} remove={() => remove(id)} />
         ))}
       </tbody>
     </table>

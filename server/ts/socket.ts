@@ -7,17 +7,17 @@ const createio = (bot: Bot, server: Server) => {
 
   const update = () => {
     io.emit("update", {
-      queue: bot.queue,
+      queue: bot.getqueue(),
       pstatus: bot.playstatus(),
       channel: bot.getchannel(),
     });
   };
 
   io.on("connect", (socket) => {
-    bot.listeners[socket.id] = update;
+    bot.addlistener(socket.id, update);
 
     socket.on("disconnect", () => {
-      delete bot.listeners[socket.id];
+      bot.removelistener(socket.id);
     });
 
     socket.on("add", (url: string) => {

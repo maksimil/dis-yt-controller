@@ -14,6 +14,46 @@ type qentry = {
   id: string;
 };
 
+class Listen<T> {
+  value: T;
+  listeners: { [key: string]: (v: T) => void } = {};
+
+  constructor(initial: T) {
+    this.value = initial;
+  }
+
+  call = <D>(fn: (v: T) => { v: T; r: D }) => {
+    const { v, r } = fn(this.value);
+    this.value = v;
+    Object.keys(this.listeners).forEach((k) => this.listeners[k](this.value));
+    return r;
+  };
+
+  change = (fn: (v: T) => T) => {
+    this.call((v) => {
+      return { v: fn(v), r: null };
+    });
+  };
+
+  get = <D>(fn: (v: T) => D) => fn(this.value);
+
+  addlistener = (fn: (v: T) => void, id?: string) => {
+    const key = id || uuidv4();
+    this.listeners[key] = fn;
+    return key;
+  };
+
+  removelistener = (id: string) => {
+    delete this.listeners[id];
+  };
+}
+
+type botlistenables = {
+  queue: qentry[];
+  vc: VoiceConnection | null;
+  dispatcher: StreamDispatcher | null;
+};
+
 class Bot {
   client: Client = new Client();
   prefix: string;
@@ -21,14 +61,19 @@ class Bot {
   mainid: string = "-1";
 
   mode: "queue" | "playlist" = "queue";
-  dispatcher: StreamDispatcher | null = null;
-  vc: VoiceConnection | null = null;
-  queue: qentry[] = [];
 
-  listeners: { [key: string]: () => void } = {};
+  listenables: Listen<botlistenables> = new Listen({
+    queue: [],
+    vc: null,
+    dispatcher: null,
+  } as botlistenables);
 
-  calllisteners = () => {
-    Object.keys(this.listeners).forEach((k) => this.listeners[k]());
+  addlistener = (id: string, fn: () => void) => {
+    this.listenables.addlistener((v) => fn(), id);
+  };
+
+  removelistener = (id: string) => {
+    this.listenables.removelistener(id);
   };
 
   commands: { [key: string]: (msg: Message) => Promise<void> } = {
@@ -64,11 +109,12 @@ class Bot {
         .join()
         .then((c) => {
           // set voice state
-          this.vc = c;
+          this.listenables.change((v) => {
+            v.vc = c;
+            return v;
+          });
           // inform
           msg.channel.send(`Connected to ${channel.name}`);
-          // listeners
-          this.calllisteners();
         })
         .catch((e) => {
           // inform about error
@@ -80,19 +126,20 @@ class Bot {
 
     // leave a vc
     leave: async (msg) => {
-      // check if in vc
-      if (this.vc) {
-        // inform
-        msg.channel.send(`Disconnected from ${this.vc.channel.name}`);
-        // disconnect
-        this.vc?.disconnect();
-        this.vc = null;
-        this.dispatcher = null;
-        // listeners
-        this.calllisteners();
-      } else {
-        msg.channel.send("Not in vc");
-      }
+      this.listenables.change((v) => {
+        // check if in vc
+        if (v.vc) {
+          // inform
+          msg.channel.send(`Disconnected from ${v.vc.channel.name}`);
+          // disconnect
+          v.vc?.disconnect();
+          v.vc = null;
+          v.dispatcher = null;
+        } else {
+          msg.channel.send("Not in vc");
+        }
+        return v;
+      });
     },
   };
 
@@ -136,96 +183,110 @@ class Bot {
   };
 
   addurls = (urls: string[]) => {
-    // add urls to queue and attach ids
-    this.queue.push(
-      ...urls.map((url) => {
-        return {
-          url,
-          id: uuidv4(),
-        };
-      })
-    );
-    // listeners
-    this.calllisteners();
+    this.listenables.change((v) => {
+      // add urls to queue and attach ids
+      v.queue.push(
+        ...urls.map((url) => {
+          return {
+            url,
+            id: uuidv4(),
+          };
+        })
+      );
+      return v;
+    });
   };
 
   remove = (id: string) => {
-    // filter the ones without id
-    let found = false;
-    this.queue = this.queue.filter((e) => {
-      if (e.id === id) {
-        found = true;
-        return false;
-      }
-      return true;
+    return this.listenables.call((v) => {
+      // filter the ones without id
+      let found = false;
+      v.queue = v.queue.filter((e) => {
+        if (e.id === id) {
+          found = true;
+          return false;
+        }
+        return true;
+      });
+      return { v, r: found };
     });
-    this.calllisteners();
-    return found;
   };
 
   // play queue
   playqueue = () => {
-    // return false if no queue
-    if (this.queue.length === 0) {
-      this.dispatcher = null;
-      this.calllisteners();
-      return false;
-    }
-    // return true if already playing or on pause
-    if (this.dispatcher) return true;
+    return this.listenables.call((v) => {
+      // return false if no queue
+      if (v.queue.length === 0) {
+        v.dispatcher = null;
+        return { v, r: false };
+      }
+      // return true if already playing or on pause
+      if (v.dispatcher) return { v, r: true };
 
-    if (this.vc) {
-      // playing the song
-      this.dispatcher = this.vc.play(ytdl(this.queue[0].url));
-      // recurse
-      this.dispatcher.on("finish", () => {
-        const el = this.queue.shift() as qentry;
-        if (this.mode === "playlist") this.queue.push(el);
-        this.calllisteners();
-        this.dispatcher = null;
-        this.playqueue();
-      });
-      // confirm
-      return true;
-    }
-    // no vc
-    return false;
+      if (v.vc) {
+        // playing the song
+        v.dispatcher = v.vc.play(ytdl(v.queue[0].url));
+        // recurse
+        v.dispatcher.on("finish", () => {
+          const el = v.queue.shift() as qentry;
+          if (this.mode === "playlist") v.queue.push(el);
+          v.dispatcher = null;
+          this.playqueue();
+        });
+        // confirm
+        return { v, r: true };
+      }
+      // no vc
+      return { v, r: false };
+    });
   };
 
   // skip
   skip = () => {
-    if (this.dispatcher) {
-      this.dispatcher.end();
-      this.calllisteners();
-      return true;
-    }
-    return false;
+    return this.listenables.call((v) => {
+      if (v.dispatcher) {
+        v.dispatcher.end();
+        return { v, r: true };
+      }
+      return { v, r: true };
+    });
   };
 
   // play/pause
   p = () => {
-    // return play attempt if not playing
-    if (!this.dispatcher) {
-      return this.playqueue();
-    }
-    // resume if paused, pause if not
-    if (this.dispatcher.paused) {
-      this.dispatcher.resume();
-    } else {
-      this.dispatcher.pause();
-    }
-    this.calllisteners();
-    return true;
+    this.listenables.call((v) => {
+      // return play attempt if not playing
+      if (!v.dispatcher) {
+        return { v, r: this.playqueue() };
+      }
+      // resume if paused, pause if not
+      if (v.dispatcher.paused) {
+        v.dispatcher.resume();
+      } else {
+        v.dispatcher.pause();
+      }
+      return { v, r: true };
+    });
   };
 
   playstatus = (): "play" | "paused" | "notplaying" => {
-    if (!this.dispatcher) return "notplaying";
-    if (this.dispatcher.paused) return "paused";
-    else return "play";
+    return this.listenables.get((v) => {
+      if (!v.dispatcher) return "notplaying";
+      if (v.dispatcher.paused) return "paused";
+      else return "play";
+    });
   };
 
   getchannel = () => {
-    return this.vc?.channel.name;
+    return this.listenables.get((v) => {
+      return v.vc?.channel.name;
+    });
+  };
+
+  getqueue = () => {
+    return this.listenables.get((v) => {
+      return v.queue;
+    });
   };
 }
 

@@ -27,6 +27,7 @@ type State = {
   queue: qentry[];
   pstatus: "play" | "paused" | "notplaying";
   volume: number | undefined;
+  turlcache: { [key: string]: string };
 };
 
 declare module "*.json" {

@@ -355,6 +355,15 @@ class Bot {
   getvolume = () => {
     return this.listenables.get((v) => v.dispatcher?.volume);
   };
+
+  getturlcache = () => {
+    let turlcache: { [key: string]: string } = {};
+    const cache = this.queueinfocache.cache;
+    Object.keys(cache).forEach((url) => {
+      turlcache[cache[url].title] = url;
+    });
+    return turlcache;
+  };
 }
 
 // export Bot

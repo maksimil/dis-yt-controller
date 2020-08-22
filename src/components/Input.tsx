@@ -2,6 +2,7 @@ import React from "react";
 
 class Input extends React.Component<
   {
+    turlcache: { [key: string]: string };
     add: (s: string) => void;
     lastvalid: boolean;
   },
@@ -18,7 +19,7 @@ class Input extends React.Component<
   inputref: React.RefObject<HTMLInputElement> = React.createRef();
 
   render() {
-    const { add, lastvalid } = this.props;
+    const { add, lastvalid, turlcache } = this.props;
     const { url, focused } = this.state;
     return (
       <tr>
@@ -51,12 +52,22 @@ class Input extends React.Component<
               }}
             >
               <tbody>
-                <tr className="autocompleteelement">
-                  <td>BOY</td>
-                </tr>
-                <tr className="autocompleteelement">
-                  <td>OH, BOY</td>
-                </tr>
+                {Object.keys(turlcache)
+                  .filter((title) => title.startsWith(url))
+                  .map((title) => {
+                    const url0 = turlcache[title];
+                    return (
+                      <tr className="autocompleteelement" key={url0}>
+                        <td
+                          onMouseEnter={() => {
+                            this.setState({ url: url0 });
+                          }}
+                        >
+                          {title}
+                        </td>
+                      </tr>
+                    );
+                  })}
               </tbody>
             </table>
           ) : null}

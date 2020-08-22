@@ -51,7 +51,7 @@ class App extends React.Component<AppProps, AppState> {
   };
 
   render() {
-    const { pstatus, queue, channel, volume } = this.state.state;
+    const { pstatus, queue, channel, volume, turlcache } = this.state.state;
     const { lastvalid } = this.state.innerstate;
     return (
       <table>
@@ -80,6 +80,7 @@ class App extends React.Component<AppProps, AppState> {
           <tr>
             <td>
               <List
+                turlcache={turlcache}
                 lastvalid={lastvalid}
                 queue={queue}
                 remove={this.removeelement}

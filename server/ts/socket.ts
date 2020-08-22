@@ -12,6 +12,7 @@ const createio = (bot: Bot, server: Server) => {
       pstatus: bot.playstatus(),
       channel: bot.getchannel(),
       volume: bot.getvolume(),
+      turlcache: bot.getturlcache(),
     });
   };
 
@@ -22,6 +23,7 @@ const createio = (bot: Bot, server: Server) => {
       pstatus: bot.playstatus(),
       channel: bot.getchannel(),
       volume: bot.getvolume(),
+      turlcache: bot.getturlcache(),
     });
   };
 

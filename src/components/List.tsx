@@ -3,15 +3,16 @@ import Input from "./Input";
 import QueueElement from "./QueueElement";
 
 const List: React.FC<{
+  turlcache: { [key: string]: string };
   lastvalid: boolean;
   queue: qentry[];
   add: (url: string) => void;
   remove: (id: string) => void;
-}> = ({ queue, add, remove, lastvalid }) => {
+}> = ({ queue, add, remove, lastvalid, turlcache }) => {
   return (
     <table>
       <thead>
-        <Input add={add} lastvalid={lastvalid} />
+        <Input add={add} lastvalid={lastvalid} turlcache={turlcache} />
       </thead>
       <tbody>
         {queue.reverse().map(({ id, info, url }) => (

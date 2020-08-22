@@ -3,14 +3,15 @@ import Input from "./Input";
 import QueueElement from "./QueueElement";
 
 const List: React.FC<{
+  lastvalid: boolean;
   queue: qentry[];
   add: (url: string) => void;
   remove: (id: string) => void;
-}> = ({ queue, add, remove }) => {
+}> = ({ queue, add, remove, lastvalid }) => {
   return (
     <table>
       <thead>
-        <Input add={add} />
+        <Input add={add} lastvalid={lastvalid} />
       </thead>
       <tbody>
         {queue.reverse().map(({ id, info, url }) => (

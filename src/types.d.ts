@@ -9,9 +9,17 @@ type qentry = {
   url: string;
 };
 
+type AppProps = {
+  socket: SocketIOClient.Socket;
+  state: State;
+};
+
 type AppState = {
   socket: SocketIOClient.Socket;
   state: State;
+  innerstate: {
+    lastvalid: boolean;
+  };
 };
 
 type State = {

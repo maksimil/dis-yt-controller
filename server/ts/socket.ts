@@ -5,9 +5,9 @@ import { Server } from "http";
 const createio = (bot: Bot, server: Server) => {
   const io = socketio(server);
 
-  const asyncupdate = async () => {
+  const asyncupdate = async (socket: SocketIO.Socket) => {
     const queue = await bot.getqueue();
-    io.emit("update", {
+    socket.emit("update", {
       queue,
       pstatus: bot.playstatus(),
       channel: bot.getchannel(),
@@ -15,9 +15,9 @@ const createio = (bot: Bot, server: Server) => {
     });
   };
 
-  const update = () => {
-    asyncupdate();
-    io.emit("update", {
+  const update = (socket: SocketIO.Socket) => () => {
+    asyncupdate(socket);
+    socket.emit("update", {
       queue: bot.getqueuecached(),
       pstatus: bot.playstatus(),
       channel: bot.getchannel(),
@@ -26,15 +26,16 @@ const createio = (bot: Bot, server: Server) => {
   };
 
   io.on("connect", (socket) => {
-    bot.addlistener(socket.id, update);
+    const upd = update(socket);
+
+    bot.addlistener(socket.id, upd);
 
     socket.on("disconnect", () => {
       bot.removelistener(socket.id);
     });
 
     socket.on("add", (url: string) => {
-      // TODO: url validation
-      bot.addurls([url]);
+      socket.emit("urlstat", bot.addurl(url));
       bot.playqueue();
     });
 
@@ -54,7 +55,7 @@ const createio = (bot: Bot, server: Server) => {
       bot.setvolume(volume);
     });
 
-    update();
+    upd();
   });
 
   return io;

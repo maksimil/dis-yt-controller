@@ -4,15 +4,28 @@ import ControlPanel from "./components/ControlPanel";
 import StatusBar from "./components/StatusBar";
 import VolumeController from "./components/VolumeController";
 
-class App extends React.Component<AppState, AppState> {
-  constructor(props: AppState) {
+class App extends React.Component<AppProps, AppState> {
+  constructor(props: Readonly<AppProps>) {
     super(props);
 
-    this.state = props;
+    this.state = {
+      ...props,
+      innerstate: {
+        lastvalid: true,
+      },
+    };
 
     this.state.socket.on("update", (state: State) => {
       this.setState({
         state,
+      });
+    });
+
+    this.state.socket.on("urlstat", (valid: boolean) => {
+      this.setState({
+        innerstate: {
+          lastvalid: valid,
+        },
       });
     });
   }
@@ -39,6 +52,7 @@ class App extends React.Component<AppState, AppState> {
 
   render() {
     const { pstatus, queue, channel, volume } = this.state.state;
+    const { lastvalid } = this.state.innerstate;
     return (
       <table>
         <tbody>
@@ -66,6 +80,7 @@ class App extends React.Component<AppState, AppState> {
           <tr>
             <td>
               <List
+                lastvalid={lastvalid}
                 queue={queue}
                 remove={this.removeelement}
                 add={this.addtoqueue}

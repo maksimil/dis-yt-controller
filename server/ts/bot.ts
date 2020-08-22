@@ -205,19 +205,38 @@ class Bot {
     return true;
   };
 
+  addurl = (url: string) => {
+    const valid = ytdl.validateURL(url);
+    if (valid) {
+      this.listenables.change((v) => {
+        v.queue.push({ url, id: uuidv4() });
+        return v;
+      });
+    }
+    return valid;
+  };
+
   addurls = (urls: string[]) => {
-    this.listenables.change((v) => {
-      // add urls to queue and attach ids
-      v.queue.push(
-        ...urls.map((url) => {
-          return {
-            url,
-            id: uuidv4(),
-          };
-        })
-      );
-      return v;
+    // url check
+    let valid: string[] = [];
+    let invalid: string[] = [];
+    urls.forEach((url) => {
+      (ytdl.validateURL(url) ? valid : invalid).push(url);
     });
+    if (valid.length !== 0)
+      this.listenables.change((v) => {
+        // add urls to queue and attach ids
+        v.queue.push(
+          ...valid.map((url) => {
+            return {
+              url,
+              id: uuidv4(),
+            };
+          })
+        );
+        return v;
+      });
+    return invalid;
   };
 
   remove = (id: string) => {

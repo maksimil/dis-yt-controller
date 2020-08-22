@@ -5,9 +5,18 @@ input {
   border: none;
   margin: 0px;
   padding: 0px;
+
+  border-left: 2px solid transparent;
 }
 
 input:focus {
   border: none;
   outline: none;
+
+  border-left: 2px solid transparent;
+}
+
+input.invalid,
+input.invalid:focus {
+  border-left: 2px solid red;
 }

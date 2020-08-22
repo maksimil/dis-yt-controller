@@ -1,7 +1,10 @@
 import React from "react";
 
 class Input extends React.Component<
-  { add: (s: string) => void },
+  {
+    add: (s: string) => void;
+    lastvalid: boolean;
+  },
   { url: string }
 > {
   state = {
@@ -9,10 +12,12 @@ class Input extends React.Component<
   };
 
   render() {
+    const { add, lastvalid } = this.props;
     return (
       <tr>
         <td className="text" colSpan={2}>
           <input
+            className={lastvalid ? "" : "invalid"}
             type="text"
             value={this.state.url}
             placeholder="url"
@@ -27,7 +32,7 @@ class Input extends React.Component<
           <button
             className="list"
             onClick={() => {
-              this.props.add(this.state.url);
+              add(this.state.url);
               this.setState({ url: "" });
             }}
           >

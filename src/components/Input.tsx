@@ -7,11 +7,13 @@ class Input extends React.Component<
     lastvalid: boolean;
   },
   {
+    nameurl: string;
     url: string;
     focused: boolean;
   }
 > {
   state = {
+    nameurl: "",
     url: "",
     focused: false,
   };
@@ -20,7 +22,7 @@ class Input extends React.Component<
 
   render() {
     const { add, lastvalid, turlcache } = this.props;
-    const { url, focused } = this.state;
+    const { nameurl, url, focused } = this.state;
     return (
       <tr>
         <td className="text" colSpan={2}>
@@ -37,8 +39,10 @@ class Input extends React.Component<
               this.setState({ focused: false });
             }}
             onChange={(e) => {
+              const value = e.target.value;
               this.setState({
-                url: e.target.value,
+                nameurl: value,
+                url: value,
               });
             }}
           />
@@ -53,7 +57,7 @@ class Input extends React.Component<
             >
               <tbody>
                 {Object.keys(turlcache)
-                  .filter((title) => title.startsWith(url))
+                  .filter((title) => title.startsWith(nameurl))
                   .map((title) => {
                     const url0 = turlcache[title];
                     return (

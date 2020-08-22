@@ -20,3 +20,21 @@ input.invalid,
 input.invalid:focus {
   border-left: 2px solid red;
 }
+
+table.autocomplete {
+  position: absolute;
+  margin-top: 2px;
+
+  background-color: white;
+  padding: 5px;
+  z-index: 0;
+}
+
+tr.autocompleteelement {
+  padding-left: 2px;
+  margin-bottom: 2px;
+}
+
+tr.autocompleteelement:hover {
+  background-color: lightgray;
+}

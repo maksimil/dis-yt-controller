@@ -3,7 +3,7 @@ import Listen from "./listen";
 import { VoiceConnection, StreamDispatcher } from "discord.js";
 
 class State extends Listen<{
-  queue: Queue<string>;
+  queue: Queue<quentry>;
   vc: VoiceConnection | undefined;
   dispatcher: StreamDispatcher | undefined;
 }> {

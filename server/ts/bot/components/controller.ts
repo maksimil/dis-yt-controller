@@ -8,6 +8,7 @@ type Controller = {
   remove: (id: string) => boolean;
   p: () => void;
   skip: () => boolean;
+  setvolume: (v: number) => void;
 };
 
 const Controller = (stateref: State) => {
@@ -75,7 +76,14 @@ const Controller = (stateref: State) => {
     });
   };
 
-  return { play, enqueue, remove, p, skip } as Controller;
+  const setvolume = (v: number) => {
+    stateref.change((state) => {
+      state.dispatcher?.setVolume(v);
+      return state;
+    });
+  };
+
+  return { play, enqueue, remove, p, skip, setvolume } as Controller;
 };
 
 export default Controller;

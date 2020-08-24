@@ -1,4 +1,5 @@
 import React from "react";
+import Autocomplete from "./Autocomplete";
 
 class Input extends React.Component<
   {
@@ -47,33 +48,14 @@ class Input extends React.Component<
             }}
           />
           {focused ? (
-            <table
-              className="autocomplete"
-              style={{
-                width: `${
-                  this.inputref.current?.getBoundingClientRect().width
-                }px`,
-              }}
-            >
-              <tbody>
-                {Object.keys(turlcache)
-                  .filter((title) => title.startsWith(nameurl))
-                  .map((title) => {
-                    const url0 = turlcache[title];
-                    return (
-                      <tr className="autocompleteelement" key={url0}>
-                        <td
-                          onMouseEnter={() => {
-                            this.setState({ url: url0 });
-                          }}
-                        >
-                          {title}
-                        </td>
-                      </tr>
-                    );
-                  })}
-              </tbody>
-            </table>
+            <Autocomplete
+              turlcache={turlcache}
+              seturl={(url) => this.setState({ url })}
+              nameurl={nameurl}
+              width={
+                this.inputref.current?.getBoundingClientRect().width || 200
+              }
+            />
           ) : null}
         </td>
         <td>

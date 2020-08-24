@@ -18,11 +18,11 @@ class Queue<T> {
     return element;
   };
 
-  removeuniqueue = (fn: (v: T) => boolean) => {
+  removeunique = (fn: (v: T) => boolean) => {
     const index = this.queue.findIndex(fn);
     if (index === -1) return false;
 
-    this.queue = this.queue.splice(index - 1, 1);
+    this.queue.splice(index, 1);
     return true;
   };
 

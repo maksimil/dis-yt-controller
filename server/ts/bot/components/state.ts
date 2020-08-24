@@ -10,8 +10,6 @@ class State extends Listen<{
   constructor() {
     super({ queue: new Queue(), vc: undefined, dispatcher: undefined });
   }
-
-  getproperty = (v: "queue" | "vc" | "dispatcher") => this.state[v];
 }
 
 export default State;

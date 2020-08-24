@@ -30,6 +30,8 @@ class Queue<T> {
     this.queue = this.queue.filter(fn);
   };
 
+  map = this.queue.map;
+
   length = () => this.queue.length;
 }
 

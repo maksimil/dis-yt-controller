@@ -37,6 +37,14 @@ class CacheMap<T> {
   getcache = (v: string, def: T) => {
     return this.cache[v] || def;
   };
+
+  invertcache = (inverter: (v: T) => string) => {
+    let invertedcache: { [key: string]: string } = {};
+    Object.keys(this.cache).forEach((k) => {
+      invertedcache[inverter(this.cache[k])] = k;
+    });
+    return invertedcache;
+  };
 }
 
 export default CacheMap;

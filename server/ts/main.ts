@@ -1,6 +1,6 @@
 import path from "path";
 import express from "express";
-import Bot from "./bot";
+import Bot from "./bot/bot";
 import http from "http";
 import socket from "./socket";
 import config from "../config.json";
@@ -28,7 +28,6 @@ const ip = config.LANip;
 const connect = () => {
   try {
     server.listen(port, ip, () => {
-      console.log(`Listening on ${port} http://localhost:${port}`);
       console.log(`Listening on ${port} http://${ip}:${port}`);
     });
   } catch (e) {

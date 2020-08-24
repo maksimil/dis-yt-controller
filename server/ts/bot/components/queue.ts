@@ -22,7 +22,7 @@ class Queue<T> {
     const index = this.queue.findIndex(fn);
     if (index === -1) return false;
 
-    this.queue = this.queue.splice(index, 1);
+    this.queue = this.queue.splice(index - 1, 1);
     return true;
   };
 
@@ -30,7 +30,7 @@ class Queue<T> {
     this.queue = this.queue.filter(fn);
   };
 
-  map = this.queue.map;
+  map = <D>(f: (v: T) => D) => this.queue.map(f);
 
   length = () => this.queue.length;
 }

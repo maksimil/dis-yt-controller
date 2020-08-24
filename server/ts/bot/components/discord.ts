@@ -1,13 +1,10 @@
-import { Client, Message, VoiceChannel, StreamDispatcher } from "discord.js";
+import { Client, Message, VoiceChannel } from "discord.js";
 import State from "./state";
-import ytdl from "ytdl-core";
 
 class Discord {
   client: Client = new Client();
 
   commands: { [key: string]: (msg: Message) => void };
-
-  play: (url: string) => StreamDispatcher | undefined;
 
   constructor(stateref: State, token: string, prefix: string) {
     this.commands = {
@@ -72,18 +69,6 @@ class Discord {
         fun(msg);
       }
     });
-
-    this.play = (url: string) => {
-      return stateref.call((state) => {
-        if (!state.vc) return { state, r: undefined };
-
-        state.dispatcher?.end();
-
-        state.dispatcher = state.vc.play(ytdl(url));
-
-        return { state, r: state.dispatcher };
-      });
-    };
 
     this.client.login(token);
   }

@@ -29,6 +29,8 @@ class Queue<T> {
   filter = (fn: (v: T) => boolean) => {
     this.queue = this.queue.filter(fn);
   };
+
+  length = () => this.queue.length;
 }
 
 export default Queue;

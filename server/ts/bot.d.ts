@@ -1,4 +1,4 @@
-import { Client, VoiceConnection } from "discord.js";
+import { Client, VoiceConnection, StreamDispatcher } from "discord.js";
 
 type QueueEntry = {
   url: string;
@@ -8,11 +8,6 @@ type QueueEntry = {
 type VidInfo = {
   title: string;
   duration: number;
-};
-
-type Listenable<T> = {
-  v: T;
-  listener: (v: T) => void;
 };
 
 type BotState = {

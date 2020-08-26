@@ -1,7 +1,4 @@
-type quentry = {
-  url: string;
-  id: string;
-};
+type smap<T> = { [key: string]: T };
 
 type updatequentry = {
   id: string;
@@ -15,11 +12,6 @@ type updatedata = {
   pstatus: "play" | "paused" | "notplaying";
   volume: number | undefined;
   turlcache: { [key: string]: string };
-};
-
-type vinfo = {
-  title: string;
-  duration: number;
 };
 
 declare module "*.json" {

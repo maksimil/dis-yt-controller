@@ -22,7 +22,7 @@ type BotState = {
   dispatcher: StreamDispatcher | undefined;
   queue: QueueEntry[];
 
-  cache: { [url: string]: VidInfo };
+  cache: smap<VidInfo>;
 
   listener: () => void;
 };

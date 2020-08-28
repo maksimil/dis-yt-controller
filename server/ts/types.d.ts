@@ -14,6 +14,10 @@ type updatedata = {
   turlcache: { [key: string]: string };
 };
 
+type fetchdata = {
+  queue: updatequentry[];
+};
+
 declare module "*.json" {
   const value: any;
   export default value;

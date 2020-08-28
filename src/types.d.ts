@@ -30,6 +30,10 @@ type State = {
   turlcache: { [key: string]: string };
 };
 
+type fetchdata = {
+  queue: qentry[];
+};
+
 declare module "*.json" {
   const value: any;
   export default value;

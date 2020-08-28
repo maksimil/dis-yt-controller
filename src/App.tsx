@@ -28,6 +28,15 @@ class App extends React.Component<AppProps, AppState> {
         },
       });
     });
+
+    this.state.socket.on("fetch", (data: fetchdata) => {
+      this.setState({
+        state: {
+          ...this.state.state,
+          queue: data.queue,
+        },
+      });
+    });
   }
 
   addtoqueue = (url: string) => {

@@ -27,16 +27,6 @@ const getplaystatus = (state: BotState): "play" | "paused" | "notplaying" => {
 
 const getvolume = (state: BotState) => state.dispatcher?.volume;
 
-export const getupdatedata = async (state: BotState) => {
-  return {
-    queue: await getqueue(state),
-    channel: getchannel(state),
-    pstatus: getplaystatus(state),
-    volume: getvolume(state),
-    turlcache: getturlcache(state.cache),
-  } as updatedata;
-};
-
 export const getcachedupdatedata = (state: BotState) => {
   return {
     queue: getqueuecached(state),
@@ -46,3 +36,6 @@ export const getcachedupdatedata = (state: BotState) => {
     turlcache: getturlcache(state.cache),
   } as updatedata;
 };
+
+export const fetchasyncdata = async (state: BotState) =>
+  ({ queue: await getqueue(state) } as fetchdata);

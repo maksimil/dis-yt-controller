@@ -1,37 +1,26 @@
 import socketio from "socket.io";
 import { Server } from "http";
 import { BotState } from "./bot";
-import { getupdatedata, getcachedupdatedata } from "./bot/get";
+import { fetchasyncdata, getcachedupdatedata } from "./bot/get";
 import { enqueue, play, remove, skip, p, setvolume } from "./bot/controller";
+
+type SocketEmmiter = SocketIO.Server | SocketIO.Socket;
 
 const createio = (bot: BotState, server: Server) => {
   const io = socketio(server);
 
-  const asyncupdate = async (socket: SocketIO.Socket) => {
-    const data = await getupdatedata(bot);
-    socket.emit("update", data);
+  const fetchdata = async (emmiter: SocketEmmiter) => {
+    emmiter.emit("fetch", await fetchasyncdata(bot));
   };
 
-  const update = (socket: SocketIO.Socket) => () => {
-    asyncupdate(socket);
-    socket.emit("update", getcachedupdatedata(bot));
+  const update = (emmiter: SocketEmmiter) => {
+    fetchdata(emmiter);
+    emmiter.emit("update", getcachedupdatedata(bot));
   };
 
-  let listeners: smap<() => void> = {};
-
-  bot.listener = () => {
-    Object.keys(listeners).forEach((k) => listeners[k]());
-  };
+  bot.listener = () => update(io);
 
   io.on("connect", (socket) => {
-    const upd = update(socket);
-
-    listeners[socket.id] = upd;
-
-    socket.on("disconnect", () => {
-      delete listeners[socket.id];
-    });
-
     socket.on("add", (url: string) => {
       socket.emit("urlstat", enqueue(bot, url));
       play(bot);
@@ -53,7 +42,7 @@ const createio = (bot: BotState, server: Server) => {
       setvolume(bot, volume);
     });
 
-    upd();
+    update(socket);
   });
 
   return io;

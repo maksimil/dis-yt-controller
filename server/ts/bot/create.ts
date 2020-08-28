@@ -1,8 +1,7 @@
 import { Client, Message, VoiceChannel } from "discord.js";
 import { callafter } from "./listen";
 import { BotState } from "../bot";
-import { loadobject } from "./load";
-import { join } from "path";
+import { loadcache } from "./yt";
 
 export const createbot = (token: string, prefix: string) => {
   let state = {
@@ -11,7 +10,7 @@ export const createbot = (token: string, prefix: string) => {
     vc: undefined,
     dispatcher: undefined,
     queue: [],
-    cache: loadobject(join("data", "infos.cache.json"), {}),
+    cache: loadcache(),
   } as BotState;
 
   const commands: smap<(msg: Message) => void> = {

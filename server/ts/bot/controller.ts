@@ -10,10 +10,13 @@ export const play = (state: BotState) =>
     if (state.dispatcher) return true;
 
     if (state.vc) {
-      state.dispatcher = state.vc.play(ytdl(state.queue[0].url));
+      const element = state.queue[0];
+
+      state.dispatcher = state.vc.play(ytdl(element.url));
 
       state.dispatcher.on("finish", () => {
         state.queue.shift();
+        state.queue.push(element);
         state.dispatcher = undefined;
         play(state);
       });

@@ -18,3 +18,11 @@ export const getinfo = async (cache: smap<VidInfo>, url: string) => {
   cache[url] = await getvidinfo(url);
   return cache[url];
 };
+
+export const getturlcache = (cache: smap<VidInfo>) => {
+  let turlcache: smap<string> = {};
+  Object.keys(cache).forEach((url) => {
+    turlcache[cache[url].title] = url;
+  });
+  return turlcache;
+};

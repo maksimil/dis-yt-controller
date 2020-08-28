@@ -61,7 +61,7 @@ class App extends React.Component<AppProps, AppState> {
               <StatusBar channel={channel} volume={volume} />
             </td>
           </tr>
-          {volume ? (
+          {volume !== undefined ? (
             <tr>
               <td>
                 <VolumeController volume={volume} setvolume={this.setvolume} />

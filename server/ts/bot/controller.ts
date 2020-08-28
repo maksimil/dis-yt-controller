@@ -59,5 +59,5 @@ export const skip = (state: BotState) =>
 
 export const setvolume = (state: BotState, v: number) =>
   callafter(state.listener, () => {
-    state.dispatcher?.setVolume(v);
+    state.dispatcher?.setVolume(v > 0 ? v : 0);
   });

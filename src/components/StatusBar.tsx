@@ -11,10 +11,6 @@ const StatusBar: React.FC<{ channel?: string; volume?: number }> = ({
           <td>channel:</td>
           <td>{channel || "none"}</td>
         </tr>
-        <tr>
-          <td>volume:</td>
-          <td>{volume || "not playing"}</td>
-        </tr>
       </tbody>
     </table>
   );

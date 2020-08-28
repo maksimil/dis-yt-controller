@@ -1,21 +1,18 @@
-import {
-  Client,
-  Message,
-  VoiceChannel,
-  VoiceConnection,
-  StreamDispatcher,
-} from "discord.js";
-import { BotState, VidInfo } from "../bot";
+import { Client, Message, VoiceChannel } from "discord.js";
+import { callafter } from "./listen";
+import { BotState } from "../bot";
 import { loadobject } from "./load";
 import { join } from "path";
 
 export const createbot = (token: string, prefix: string) => {
-  let client = new Client();
-
-  let listener = () => {};
-
-  let vc: VoiceConnection | undefined = undefined;
-  let dispatcher: StreamDispatcher | undefined = undefined;
+  let state = {
+    client: new Client(),
+    listener: () => {},
+    vc: undefined,
+    dispatcher: undefined,
+    queue: [],
+    cache: loadobject(join("data", "infos.cache.json"), {}),
+  } as BotState;
 
   const commands: smap<(msg: Message) => void> = {
     // TODO: help command
@@ -29,13 +26,16 @@ export const createbot = (token: string, prefix: string) => {
         msg.channel.send("Please join a vc to use this command");
         return;
       }
-      const channel = client.channels.cache.get(channelid) as VoiceChannel;
+      const channel = state.client.channels.cache.get(
+        channelid
+      ) as VoiceChannel;
 
       channel
         .join()
         .then((c) => {
-          vc = c;
-          listener();
+          callafter(state.listener, () => {
+            state.vc = c;
+          });
 
           msg.channel.send(`Connected to ${channel.name}`);
         })
@@ -46,21 +46,22 @@ export const createbot = (token: string, prefix: string) => {
     },
 
     leave: (msg) => {
-      if (vc) {
-        msg.channel.send(`Disconnected from ${vc.channel.name}`);
+      callafter(state.listener, () => {
+        if (state.vc) {
+          msg.channel.send(`Disconnected from ${state.vc.channel.name}`);
 
-        vc?.disconnect();
-        vc = undefined;
-        dispatcher = undefined;
-      } else {
-        msg.channel.send("Not in vc");
-      }
-
-      listener();
+          state.vc?.disconnect();
+          state.vc = undefined;
+          state.dispatcher = undefined;
+        } else {
+          msg.channel.send("Not in vc");
+        }
+      });
     },
   };
-  client.on("message", (msg) => {
-    if (msg.author === client.user) return;
+
+  state.client.on("message", (msg) => {
+    if (msg.author === state.client.user) return;
 
     if (msg.content.startsWith(prefix)) {
       const command = msg.content.split(" ")[0].slice(prefix.length);
@@ -75,12 +76,7 @@ export const createbot = (token: string, prefix: string) => {
     }
   });
 
-  return {
-    client,
-    vc,
-    dispatcher,
-    queue: [],
-    cache: loadobject<smap<VidInfo>>(join("data", "infos.cache.json"), {}),
-    listener,
-  } as BotState;
+  state.client.login(token);
+
+  return state;
 };

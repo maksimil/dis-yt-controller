@@ -1,48 +1,56 @@
-import Bot from "./bot/bot";
 import socketio from "socket.io";
 import { Server } from "http";
+import { BotState } from "./bot";
+import { getupdatedata, getcachedupdatedata } from "./bot/get";
+import { enqueue, play, remove, skip, p, setvolume } from "./bot/controller";
 
-const createio = (bot: Bot, server: Server) => {
+const createio = (bot: BotState, server: Server) => {
   const io = socketio(server);
 
   const asyncupdate = async (socket: SocketIO.Socket) => {
-    const data = await bot.get.updatedata();
+    const data = await getupdatedata(bot);
     socket.emit("update", data);
   };
 
   const update = (socket: SocketIO.Socket) => () => {
     asyncupdate(socket);
-    socket.emit("update", bot.get.cachedupdatedata());
+    socket.emit("update", getcachedupdatedata(bot));
+  };
+
+  let listeners: smap<() => void> = {};
+
+  bot.listener = () => {
+    Object.keys(listeners).forEach((k) => listeners[k]());
   };
 
   io.on("connect", (socket) => {
     const upd = update(socket);
 
-    bot.state.addlistener(upd, socket.id);
+    listeners[socket.id] = upd;
 
     socket.on("disconnect", () => {
-      bot.state.removelistener(socket.id);
+      delete listeners[socket.id];
     });
 
     socket.on("add", (url: string) => {
-      socket.emit("urlstat", bot.controller.enqueue(url));
-      bot.controller.play();
+      socket.emit("urlstat", enqueue(bot, url));
+      play(bot);
     });
 
     socket.on("remove", (id: string) => {
-      bot.controller.remove(id);
+      remove(bot, id);
     });
 
     socket.on("skip", () => {
-      bot.controller.skip();
+      skip(bot);
     });
 
     socket.on("p", () => {
-      bot.controller.p();
+      p(bot);
     });
 
     socket.on("volume", (volume: number) => {
-      bot.controller.setvolume(volume);
+      setvolume(bot, volume);
     });
 
     upd();

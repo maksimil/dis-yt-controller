@@ -1,12 +1,12 @@
 import path from "path";
 import express from "express";
-import Bot from "./bot/bot";
 import http from "http";
 import socket from "./socket";
 import config from "../config.json";
+import { createbot } from "./bot/create";
 
 // create bot
-const bot = new Bot(config.token, config.prefix);
+const bot = createbot(config.token, config.prefix);
 
 // create app
 const app = express();

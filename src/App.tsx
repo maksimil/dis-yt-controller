@@ -47,7 +47,7 @@ class App extends React.Component<AppProps, AppState> {
     this.state.socket.emit("remove", id);
   };
 
-  pause = () => {
+  p = () => {
     this.state.socket.emit("p");
   };
 
@@ -79,11 +79,7 @@ class App extends React.Component<AppProps, AppState> {
           ) : null}
           <tr>
             <td>
-              <ControlPanel
-                pstatus={pstatus}
-                skip={this.skip}
-                pause={this.pause}
-              />
+              <ControlPanel pstatus={pstatus} skip={this.skip} p={this.p} />
             </td>
           </tr>
           <tr>

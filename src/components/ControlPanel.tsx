@@ -1,25 +1,21 @@
 import React from "react";
 
+const labels: { [key: string]: string } = {
+  play: "pause",
+  paused: "resume",
+  notplaying: "play",
+};
+
 const ControlPanel: React.FC<{
-  pause: () => void;
+  p: () => void;
   skip: () => void;
   pstatus: "play" | "paused" | "notplaying";
-}> = ({ pause, pstatus, skip }) => {
-  let rbms = "not playing";
-  if (pstatus === "paused") {
-    rbms = "resume";
-  }
-  if (pstatus === "play") {
-    rbms = "pause";
-  }
+}> = ({ p, pstatus, skip }) => {
   return (
     <div className="ccontainer">
       <div className="cpanel">
-        <button
-          className="cpanel"
-          onClick={pstatus !== "notplaying" ? pause : () => {}}
-        >
-          {rbms}
+        <button className="cpanel" onClick={p}>
+          {labels[pstatus]}
         </button>
       </div>
       <div className="cpanel">

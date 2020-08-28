@@ -24,17 +24,17 @@ export const play = (state: BotState) =>
     return false;
   });
 
-export const enqueue = (state: BotState, url: string) => {
-  if (!validateURL(url)) return false;
-  state.queue.push({ url, id: v4() });
-  state.listener();
-  return true;
-};
+export const enqueue = (state: BotState, url: string) =>
+  callafter(state.listener, () => {
+    if (!validateURL(url)) return false;
+    state.queue.push({ url, id: v4() });
+    return true;
+  });
 
-export const remove = (state: BotState, id: string) => {
-  state.queue = state.queue.filter((e) => e.id !== id);
-  state.listener();
-};
+export const remove = (state: BotState, id: string) =>
+  callafter(state.listener, () => {
+    state.queue = state.queue.filter((e) => e.id !== id);
+  });
 
 export const p = (state: BotState) =>
   callafter(state.listener, () => {
@@ -57,6 +57,7 @@ export const skip = (state: BotState) =>
     return false;
   });
 
-export const setvolume = (state: BotState, v: number) => {
-  state.dispatcher?.setVolume(v);
-};
+export const setvolume = (state: BotState, v: number) =>
+  callafter(state.listener, () => {
+    state.dispatcher?.setVolume(v);
+  });

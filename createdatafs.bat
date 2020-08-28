@@ -1,0 +1,2 @@
+cd data
+mkdir playlist

@@ -8,7 +8,7 @@ const StatusBar: React.FC<{ channel?: string; volume?: number }> = ({
     <table className="status">
       <tbody>
         <tr>
-          <td>channel:</td>
+          <td className="text">channel:</td>
           <td>{channel || "none"}</td>
         </tr>
       </tbody>

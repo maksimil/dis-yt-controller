@@ -5,6 +5,7 @@ import { fetchasyncdata, getcachedupdatedata } from "./bot/get";
 import { enqueue, play, remove, skip, p, setvolume } from "./bot/controller";
 import { loadmeta, saveplaylist, loadplaylist } from "./bot/playlist";
 import { callafter } from "./utils/listen";
+import { createthread } from "./utils/repeathread";
 
 type SocketEmmiter = SocketIO.Server | SocketIO.Socket;
 
@@ -23,6 +24,13 @@ const createio = (bot: BotState, server: Server) => {
   bot.listener = () => update(io);
 
   let meta = loadmeta();
+
+  createthread((thread) => {
+    if (bot.dispatcher) {
+      const time = bot.dispatcher.streamTime;
+      io.emit("ts", time);
+    }
+  }, 500);
 
   io.on("connect", (socket) => {
     socket.on("add", (url: string) => {

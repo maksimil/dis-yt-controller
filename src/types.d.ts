@@ -19,6 +19,7 @@ type AppState = {
   state: State;
   innerstate: {
     lastvalid: boolean;
+    time: number;
   };
 };
 

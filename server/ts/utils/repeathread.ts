@@ -4,18 +4,21 @@ type repeathread = {
   period: number;
 };
 
-export const run = (thread: repeathread) => {
+export const runthread = (thread: repeathread) => {
   if (thread.running) {
     thread.fn(thread);
 
     setTimeout(() => {
-      run(thread);
+      runthread(thread);
     }, thread.period);
   }
 };
 
-export const create = (fn: (thread: repeathread) => void) => {
-  const thread = { fn, running: true } as repeathread;
-  run(thread);
+export const createthread = (
+  fn: (thread: repeathread) => void,
+  period: number
+) => {
+  const thread = { fn, running: true, period } as repeathread;
+  runthread(thread);
   return thread;
 };

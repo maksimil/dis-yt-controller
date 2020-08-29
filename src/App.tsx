@@ -4,6 +4,7 @@ import ControlPanel from "./components/ControlPanel";
 import StatusBar from "./components/StatusBar";
 import VolumeController from "./components/VolumeController";
 import Playlist from "./components/Playlist";
+import Current from "./components/Current";
 class App extends React.Component<AppProps, AppState> {
   constructor(props: Readonly<AppProps>) {
     super(props);
@@ -12,6 +13,7 @@ class App extends React.Component<AppProps, AppState> {
       ...props,
       innerstate: {
         lastvalid: true,
+        time: 0,
       },
     };
 
@@ -35,6 +37,15 @@ class App extends React.Component<AppProps, AppState> {
         state: {
           ...this.state.state,
           queue: data.queue,
+        },
+      });
+    });
+
+    this.state.socket.on("ts", (timems: number) => {
+      this.setState({
+        innerstate: {
+          ...this.state.innerstate,
+          time: Math.floor(timems / 1000),
         },
       });
     });
@@ -77,7 +88,7 @@ class App extends React.Component<AppProps, AppState> {
       turlcache,
       plnames,
     } = this.state.state;
-    const { lastvalid } = this.state.innerstate;
+    const { lastvalid, time } = this.state.innerstate;
 
     return (
       <>
@@ -94,14 +105,25 @@ class App extends React.Component<AppProps, AppState> {
               </td>
             </tr>
             {volume !== undefined ? (
-              <tr>
-                <td>
-                  <VolumeController
-                    volume={volume}
-                    setvolume={this.setvolume}
-                  />
-                </td>
-              </tr>
+              <>
+                <tr>
+                  <td>
+                    <VolumeController
+                      volume={volume}
+                      setvolume={this.setvolume}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <Current
+                      info={queue[0].info}
+                      time={time}
+                      url={queue[0].url}
+                    />
+                  </td>
+                </tr>
+              </>
             ) : null}
             <tr>
               <td>

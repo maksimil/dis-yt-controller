@@ -13,6 +13,7 @@ export const play = (state: BotState) =>
       const element = state.queue[0];
 
       state.dispatcher = state.vc.play(ytdl(element.url));
+      state.dispatcher.setVolume(state.volume);
 
       state.dispatcher.on("finish", () => {
         state.queue.shift();
@@ -62,5 +63,7 @@ export const skip = (state: BotState) =>
 
 export const setvolume = (state: BotState, v: number) =>
   callafter(state.listener, () => {
-    state.dispatcher?.setVolume(v > 0 ? v : 0);
+    const value = v > 0 ? v : 0;
+    state.volume = value;
+    state.dispatcher?.setVolume(value);
   });

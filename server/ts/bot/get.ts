@@ -25,7 +25,8 @@ const getplaystatus = (state: BotState): "play" | "paused" | "notplaying" => {
   else return "play";
 };
 
-const getvolume = (state: BotState) => state.dispatcher?.volume;
+const getvolume = (state: BotState) =>
+  state.dispatcher ? state.volume : undefined;
 
 export const getcachedupdatedata = (state: BotState) => {
   return {

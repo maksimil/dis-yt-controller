@@ -11,6 +11,7 @@ export const createbot = (token: string, prefix: string) => {
     dispatcher: undefined,
     queue: [],
     cache: loadcache(),
+    volume: 1,
   } as BotState;
 
   const commands: smap<(msg: Message) => void> = {

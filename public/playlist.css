@@ -1,0 +1,9 @@
+div.playlist {
+  padding-left: 10px;
+  flex: 2;
+}
+
+input.playlist {
+  min-width: 0pt;
+  width: 100%;
+}

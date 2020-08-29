@@ -8,6 +8,10 @@ table {
   border-collapse: collapse;
 }
 
+table.list {
+  width: 100%;
+}
+
 thead {
   background-color: lightgreen;
 }

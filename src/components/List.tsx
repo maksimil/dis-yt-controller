@@ -10,7 +10,7 @@ const List: React.FC<{
   remove: (id: string) => void;
 }> = ({ queue, add, remove, lastvalid, turlcache }) => {
   return (
-    <table>
+    <table className="list">
       <thead>
         <Input add={add} lastvalid={lastvalid} turlcache={turlcache} />
       </thead>

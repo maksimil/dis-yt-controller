@@ -3,6 +3,7 @@ import List from "./components/List";
 import ControlPanel from "./components/ControlPanel";
 import StatusBar from "./components/StatusBar";
 import VolumeController from "./components/VolumeController";
+import Playlist from "./components/Playlist";
 
 class App extends React.Component<AppProps, AppState> {
   constructor(props: Readonly<AppProps>) {
@@ -24,6 +25,7 @@ class App extends React.Component<AppProps, AppState> {
     this.state.socket.on("urlstat", (valid: boolean) => {
       this.setState({
         innerstate: {
+          ...this.state.innerstate,
           lastvalid: valid,
         },
       });
@@ -59,42 +61,56 @@ class App extends React.Component<AppProps, AppState> {
     this.state.socket.emit("volume", v);
   };
 
+  load = (name: string) => {};
+
+  save = (save: string) => {};
+
   render() {
     const { pstatus, queue, channel, volume, turlcache } = this.state.state;
     const { lastvalid } = this.state.innerstate;
     return (
-      <table>
-        <tbody>
-          <tr>
-            <td>
-              <StatusBar channel={channel} volume={volume} />
-            </td>
-          </tr>
-          {volume !== undefined ? (
+      <>
+        <table>
+          <tbody>
             <tr>
               <td>
-                <VolumeController volume={volume} setvolume={this.setvolume} />
+                <StatusBar channel={channel} volume={volume} />
               </td>
             </tr>
-          ) : null}
-          <tr>
-            <td>
-              <ControlPanel pstatus={pstatus} skip={this.skip} p={this.p} />
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <List
-                turlcache={turlcache}
-                lastvalid={lastvalid}
-                queue={queue}
-                remove={this.removeelement}
-                add={this.addtoqueue}
-              />
-            </td>
-          </tr>
-        </tbody>
-      </table>
+            <tr>
+              <td>
+                <Playlist load={this.load} save={this.save} />
+              </td>
+            </tr>
+            {volume !== undefined ? (
+              <tr>
+                <td>
+                  <VolumeController
+                    volume={volume}
+                    setvolume={this.setvolume}
+                  />
+                </td>
+              </tr>
+            ) : null}
+            <tr>
+              <td>
+                <ControlPanel pstatus={pstatus} skip={this.skip} p={this.p} />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <List
+                  turlcache={turlcache}
+                  lastvalid={lastvalid}
+                  queue={queue}
+                  remove={this.removeelement}
+                  add={this.addtoqueue}
+                />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </>
     );
   }
 }

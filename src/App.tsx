@@ -69,8 +69,16 @@ class App extends React.Component<AppProps, AppState> {
   };
 
   render() {
-    const { pstatus, queue, channel, volume, turlcache } = this.state.state;
+    const {
+      pstatus,
+      queue,
+      channel,
+      volume,
+      turlcache,
+      plnames,
+    } = this.state.state;
     const { lastvalid } = this.state.innerstate;
+
     return (
       <>
         <table>
@@ -82,7 +90,7 @@ class App extends React.Component<AppProps, AppState> {
             </tr>
             <tr>
               <td>
-                <Playlist load={this.load} save={this.save} />
+                <Playlist load={this.load} save={this.save} plnames={plnames} />
               </td>
             </tr>
             {volume !== undefined ? (

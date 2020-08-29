@@ -17,7 +17,7 @@ const createio = (bot: BotState, server: Server) => {
 
   const update = (emmiter: SocketEmmiter) => {
     fetchdata(emmiter);
-    emmiter.emit("update", getcachedupdatedata(bot));
+    emmiter.emit("update", getcachedupdatedata(bot, meta));
   };
 
   bot.listener = () => update(io);

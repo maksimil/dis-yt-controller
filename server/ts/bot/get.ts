@@ -28,13 +28,14 @@ const getplaystatus = (state: BotState): "play" | "paused" | "notplaying" => {
 const getvolume = (state: BotState) =>
   state.dispatcher ? state.volume : undefined;
 
-export const getcachedupdatedata = (state: BotState) => {
+export const getcachedupdatedata = (state: BotState, meta: string[]) => {
   return {
     queue: getqueuecached(state),
     channel: getchannel(state),
     pstatus: getplaystatus(state),
     volume: getvolume(state),
     turlcache: getturlcache(state.cache),
+    plnames: meta,
   } as updatedata;
 };
 

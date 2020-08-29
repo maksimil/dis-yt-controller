@@ -12,6 +12,7 @@ type updatedata = {
   pstatus: "play" | "paused" | "notplaying";
   volume: number | undefined;
   turlcache: { [key: string]: string };
+  plnames: string[];
 };
 
 type fetchdata = {

@@ -4,7 +4,6 @@ import ControlPanel from "./components/ControlPanel";
 import StatusBar from "./components/StatusBar";
 import VolumeController from "./components/VolumeController";
 import Playlist from "./components/Playlist";
-
 class App extends React.Component<AppProps, AppState> {
   constructor(props: Readonly<AppProps>) {
     super(props);
@@ -61,9 +60,13 @@ class App extends React.Component<AppProps, AppState> {
     this.state.socket.emit("volume", v);
   };
 
-  load = (name: string) => {};
+  load = (name: string) => {
+    this.state.socket.emit("load", name);
+  };
 
-  save = (save: string) => {};
+  save = (name: string) => {
+    this.state.socket.emit("save", name);
+  };
 
   render() {
     const { pstatus, queue, channel, volume, turlcache } = this.state.state;

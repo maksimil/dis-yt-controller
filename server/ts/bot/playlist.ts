@@ -11,7 +11,10 @@ export const ppath = (name: string) =>
 export const loadmeta = (): string[] => loadobject(metapath, []);
 
 export const loadplaylist = (name: string): QueueEntry[] =>
-  loadobject<string[]>(ppath(name), []).map((url) => ({ url, id: v4() }));
+  loadobject<string[]>(ppath(name), [], false).map((url) => ({
+    url,
+    id: v4(),
+  }));
 
 export const saveplaylist = (
   meta: string[],

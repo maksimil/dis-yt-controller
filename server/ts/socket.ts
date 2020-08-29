@@ -3,6 +3,8 @@ import { Server } from "http";
 import { BotState } from "./bot";
 import { fetchasyncdata, getcachedupdatedata } from "./bot/get";
 import { enqueue, play, remove, skip, p, setvolume } from "./bot/controller";
+import { loadmeta, saveplaylist, loadplaylist } from "./bot/playlist";
+import { callafter } from "./bot/listen";
 
 type SocketEmmiter = SocketIO.Server | SocketIO.Socket;
 
@@ -19,6 +21,8 @@ const createio = (bot: BotState, server: Server) => {
   };
 
   bot.listener = () => update(io);
+
+  let meta = loadmeta();
 
   io.on("connect", (socket) => {
     socket.on("add", (url: string) => {
@@ -40,6 +44,16 @@ const createio = (bot: BotState, server: Server) => {
 
     socket.on("volume", (volume: number) => {
       setvolume(bot, volume);
+    });
+
+    socket.on("save", (name: string) => {
+      saveplaylist(meta, name, bot.queue);
+    });
+
+    socket.on("load", (name: string) => {
+      callafter(bot.listener, () => {
+        bot.queue = loadplaylist(name);
+      });
     });
 
     update(socket);

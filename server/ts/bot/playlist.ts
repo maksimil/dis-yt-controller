@@ -1,4 +1,4 @@
-import { loadobject } from "./load";
+import { loadobject } from "../utils/load";
 import { join } from "path";
 import { QueueEntry } from "../bot";
 import { v4 } from "uuid";

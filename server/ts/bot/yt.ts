@@ -1,6 +1,6 @@
 import { VidInfo } from "../bot";
 import { getInfo } from "ytdl-core";
-import { loadobject } from "./load";
+import { loadobject } from "../utils/load";
 import { join } from "path";
 import { writeFileSync } from "fs";
 

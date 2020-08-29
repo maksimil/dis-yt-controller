@@ -4,7 +4,7 @@ import { BotState } from "./bot";
 import { fetchasyncdata, getcachedupdatedata } from "./bot/get";
 import { enqueue, play, remove, skip, p, setvolume } from "./bot/controller";
 import { loadmeta, saveplaylist, loadplaylist } from "./bot/playlist";
-import { callafter } from "./bot/listen";
+import { callafter } from "./utils/listen";
 
 type SocketEmmiter = SocketIO.Server | SocketIO.Socket;
 

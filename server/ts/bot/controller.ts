@@ -1,6 +1,6 @@
 import { BotState } from "../bot";
 import ytdl, { validateURL } from "ytdl-core";
-import { callafter } from "./listen";
+import { callafter } from "../utils/listen";
 import { v4 } from "uuid";
 
 export const play = (state: BotState) =>
